@@ -1,0 +1,62 @@
+import { LucideIcon } from 'lucide-react';
+
+export enum BreathingPhase {
+  Idle = 'Idle',
+  Inhale = 'Inhale',
+  HoldIn = 'HoldIn',
+  Exhale = 'Exhale',
+  HoldOut = 'HoldOut',
+  Rest = 'Rest',
+  Finished = 'Finished'
+}
+
+export interface BreathingPattern {
+  id: string;
+  name: string;
+  description: string;
+  recommendedDuration?: number; // Recommended session length in seconds
+  restDuration?: number; // Optional rest between cycles
+  phases: {
+    inhale: number;
+    holdIn: number;
+    exhale: number;
+    holdOut: number;
+  };
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  icon: LucideIcon;
+  color: string;
+  defaultPatternId: string;
+  patterns: string[]; // List of pattern IDs belonging to this category
+  description: string;
+}
+
+export interface SessionStats {
+  totalSessions: number;
+  totalMinutes: number;
+  streak: number;
+  lastSevenDaysActivity: number[]; // Index 0 = Sunday, 6 = Saturday
+}
+
+export interface Session {
+  id: string;
+  patternId: string;
+  patternName: string;
+  durationSeconds: number;
+  timestamp: number;
+  isCompleted: boolean;
+}
+
+export interface ChartDataPoint {
+  label: string;
+  value: number;
+}
+
+export interface ChartStats {
+  totalMinutes: number;
+  trendPercentage: number;
+  data: ChartDataPoint[];
+}
