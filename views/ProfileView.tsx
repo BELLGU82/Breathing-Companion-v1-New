@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Ghost, Bell, Moon, Volume2, Shield, Check, VolumeX, Vibrate } from 'lucide-react';
+import { Ghost, Bell, Moon, Volume2, Shield, Check, VolumeX, Vibrate, Trash2, Plus, Pencil } from 'lucide-react';
 import { NeuCard } from '../components/Neu';
 import { ActivityChartCard, ChartRange } from '../components/ui/activity-chart-card';
 import { StorageService } from '../services/StorageService';
 import { AudioService } from '../services/AudioService';
 import { HapticService } from '../services/HapticService';
 import { NotificationService } from '../services/NotificationService';
-import { ChartStats } from '../types';
+import { ChartStats, Reminder } from '../types';
 
 // Neumorphic Toggle Component
 const NeuToggle = ({ value, onToggle }: { value: boolean, onToggle: (e: React.MouseEvent) => void }) => {
@@ -40,7 +40,6 @@ const NeuToggle = ({ value, onToggle }: { value: boolean, onToggle: (e: React.Mo
 
 export const ProfileView: React.FC = () => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(StorageService.getDarkMode());
   const [isRegistered, setIsRegistered] = useState(false);
 
@@ -50,6 +49,74 @@ export const ProfileView: React.FC = () => {
   const [musicVolume, setMusicVolume] = useState(StorageService.getMusicVolume());
   const [voiceVolume, setVoiceVolume] = useState(StorageService.getVoiceVolume());
   const [notificationsEnabled, setNotificationsEnabled] = useState(StorageService.getNotificationsEnabled());
+
+  // Reminders State
+  const [reminders, setReminders] = useState<Reminder[]>(StorageService.getReminders());
+  const [isAddingReminder, setIsAddingReminder] = useState(false);
+  const [editingReminderId, setEditingReminderId] = useState<string | null>(null);
+  const [newReminderTime, setNewReminderTime] = useState('08:00');
+  const [newReminderDays, setNewReminderDays] = useState<number[]>([0, 1, 2, 3, 4]); // Sun-Thu default
+
+  const handleSaveReminder = async () => {
+    // Request permission if first time
+    const granted = await NotificationService.requestPermission();
+    if (!granted) {
+      alert('יש לאשר התראות כדי להוסיף תזכורת');
+      return;
+    }
+
+    if (editingReminderId) {
+      // Update existing
+      const reminder = reminders.find(r => r.id === editingReminderId);
+      if (reminder) {
+        reminder.time = newReminderTime;
+        reminder.days = newReminderDays;
+        StorageService.updateReminder(reminder);
+      }
+    } else {
+      // Create new
+      const reminder: Reminder = {
+        id: Date.now().toString(),
+        time: newReminderTime,
+        days: newReminderDays,
+        enabled: true
+      };
+      StorageService.addReminder(reminder);
+    }
+
+    setReminders(StorageService.getReminders());
+    setIsAddingReminder(false);
+    setEditingReminderId(null);
+    HapticService.trigger();
+
+    // Schedule immediately (mock for now, real implementation needs SW)
+    NotificationService.sendTestNotification();
+  };
+
+  const handleEditReminder = (reminder: Reminder) => {
+    setEditingReminderId(reminder.id);
+    setNewReminderTime(reminder.time);
+    setNewReminderDays(reminder.days);
+    setIsAddingReminder(true);
+  };
+
+  const handleDeleteReminder = (id: string) => {
+    if (confirm('למחוק את התזכורת?')) {
+      StorageService.deleteReminder(id);
+      setReminders(StorageService.getReminders());
+      HapticService.trigger();
+    }
+  };
+
+  const handleToggleReminder = (id: string) => {
+    const reminder = reminders.find(r => r.id === id);
+    if (reminder) {
+      reminder.enabled = !reminder.enabled;
+      StorageService.updateReminder(reminder);
+      setReminders([...StorageService.getReminders()]);
+      HapticService.trigger();
+    }
+  };
 
   // Stats State
   const [selectedRange, setSelectedRange] = useState<ChartRange>('weekly');
@@ -200,23 +267,139 @@ export const ProfileView: React.FC = () => {
       <div>
         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 mr-2">הגדרות</h3>
         <NeuCard>
-          <SettingItem
-            icon={Bell}
-            label="תזכורות יומיות"
-            toggle={handleNotificationsToggle}
-            value={notificationsEnabled}
-          >
-            {notificationsEnabled && (
-              <div className="animate-in slide-in-from-top-2 duration-200">
+          {/* Reminders Section - Only for Registered Users */}
+          {isRegistered ? (
+            <SettingItem
+              icon={Bell}
+              label="תזכורות יומיות"
+              toggle={handleNotificationsToggle}
+              value={notificationsEnabled}
+            >
+              {notificationsEnabled && (
+                <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+                  {/* Reminders List */}
+                  {!isAddingReminder && reminders.map(reminder => (
+                    <div key={reminder.id} className="flex items-center justify-between bg-white/50 p-3 rounded-xl border border-white/40">
+                      <div className="flex flex-col">
+                        <span className="text-xl font-bold text-neu-text font-mono">{reminder.time}</span>
+                        <div className="flex gap-1 mt-1">
+                          {['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day, idx) => (
+                            <span key={idx} className={`text-[10px] w-4 h-4 flex items-center justify-center rounded-full ${reminder.days.includes(idx) ? 'bg-neu-accent text-white' : 'text-gray-400'}`}>
+                              {day}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <NeuToggle
+                          value={reminder.enabled}
+                          onToggle={() => handleToggleReminder(reminder.id)}
+                        />
+                        <button
+                          onClick={() => handleEditReminder(reminder)}
+                          className="p-2 text-gray-400 hover:text-neu-accent transition-colors"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReminder(reminder.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add/Edit Reminder Form */}
+                  {isAddingReminder ? (
+                    <div className="bg-neu-base p-4 rounded-xl shadow-neu-pressed animate-in fade-in slide-in-from-top-2">
+                      <h4 className="text-sm font-bold text-gray-500 mb-3">
+                        {editingReminderId ? 'עריכת תזכורת' : 'תזכורת חדשה'}
+                      </h4>
+
+                      <div className="flex gap-4 mb-4">
+                        <input
+                          type="time"
+                          value={newReminderTime}
+                          onChange={(e) => setNewReminderTime(e.target.value)}
+                          className="flex-1 bg-neu-base shadow-neu-inner p-3 rounded-xl text-center font-mono text-lg outline-none focus:ring-2 focus:ring-neu-accent/50"
+                        />
+                      </div>
+
+                      <div className="flex justify-between mb-6 px-1">
+                        {['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              if (newReminderDays.includes(idx)) {
+                                setNewReminderDays(newReminderDays.filter(d => d !== idx));
+                              } else {
+                                setNewReminderDays([...newReminderDays, idx]);
+                              }
+                            }}
+                            className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${newReminderDays.includes(idx) ? 'bg-neu-accent text-white shadow-md scale-110' : 'bg-neu-base text-gray-400 shadow-neu-flat'}`}
+                          >
+                            {day}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            setIsAddingReminder(false);
+                            setEditingReminderId(null);
+                            setNewReminderTime('08:00');
+                            setNewReminderDays([0, 1, 2, 3, 4]);
+                          }}
+                          className="flex-1 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                          ביטול
+                        </button>
+                        <button
+                          onClick={handleSaveReminder}
+                          className="flex-1 py-2 bg-neu-accent text-white rounded-lg shadow-md hover:brightness-110 transition-all"
+                        >
+                          שמור
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsAddingReminder(true);
+                        setEditingReminderId(null);
+                        setNewReminderTime('08:00');
+                        setNewReminderDays([0, 1, 2, 3, 4]);
+                      }}
+                      className="w-full py-3 flex items-center justify-center gap-2 text-neu-accent font-medium bg-neu-base rounded-xl shadow-neu-flat active:shadow-neu-pressed transition-all"
+                    >
+                      <Plus size={20} />
+                      <span>הוסף תזכורת חדשה</span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </SettingItem>
+          ) : (
+            <SettingItem
+              icon={Bell}
+              label="תזכורות יומיות"
+              toggle={null}
+              value={false}
+            >
+              <div className="bg-gray-50 p-3 rounded-lg text-center">
+                <p className="text-sm text-gray-500 mb-2">הירשם כדי להפעיל תזכורות אישיות</p>
                 <button
-                  onClick={() => NotificationService.sendTestNotification()}
-                  className="text-xs text-neu-accent hover:underline"
+                  onClick={handleToggleRegistration}
+                  className="text-xs text-neu-accent font-bold hover:underline"
                 >
-                  שלח תזכורת בדיקה
+                  התחבר עכשיו
                 </button>
               </div>
-            )}
-          </SettingItem>
+            </SettingItem>
+          )}
           <SettingItem
             icon={Moon}
             label="מצב כהה"

@@ -1,4 +1,4 @@
-import { Session, SessionStats, ChartStats, ChartDataPoint, BreathingPattern } from '../types';
+import { Session, SessionStats, ChartStats, ChartDataPoint, BreathingPattern, Reminder } from '../types';
 
 const STORAGE_KEY_SESSIONS = 'neshima_sessions';
 const STORAGE_KEY_USER_TYPE = 'neshima_is_registered';
@@ -88,6 +88,37 @@ export const StorageService = {
 
   setLastReminderTime: (timestamp: number) => {
     localStorage.setItem('neshima_last_reminder_time', String(timestamp));
+  },
+
+  // Reminders CRUD
+  getReminders: (): Reminder[] => {
+    const stored = localStorage.getItem('neshima_reminders');
+    return stored ? JSON.parse(stored) : [];
+  },
+
+  saveReminders: (reminders: Reminder[]) => {
+    localStorage.setItem('neshima_reminders', JSON.stringify(reminders));
+  },
+
+  addReminder: (reminder: Reminder) => {
+    const reminders = StorageService.getReminders();
+    reminders.push(reminder);
+    StorageService.saveReminders(reminders);
+  },
+
+  updateReminder: (updatedReminder: Reminder) => {
+    const reminders = StorageService.getReminders();
+    const index = reminders.findIndex(r => r.id === updatedReminder.id);
+    if (index !== -1) {
+      reminders[index] = updatedReminder;
+      StorageService.saveReminders(reminders);
+    }
+  },
+
+  deleteReminder: (id: string) => {
+    const reminders = StorageService.getReminders();
+    const filtered = reminders.filter(r => r.id !== id);
+    StorageService.saveReminders(filtered);
   },
 
   getSoundsEnabled: (): boolean => {

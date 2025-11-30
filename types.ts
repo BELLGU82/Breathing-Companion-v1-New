@@ -60,3 +60,10 @@ export interface ChartStats {
   trendPercentage: number;
   data: ChartDataPoint[];
 }
+
+export interface Reminder {
+  id: string;
+  time: string; // "08:00"
+  days: number[]; // [0, 1, 2, 3, 4, 5, 6] (Sunday=0)
+  enabled: boolean;
+}
