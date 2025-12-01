@@ -26,6 +26,29 @@
       --neu-shadow-inset-light: rgba(255, 255, 255, 0.8);
       --neu-shadow-inset-dark: rgb(163, 177, 198, 0.7);
 
+      /* Typography Colors */
+      --text-primary: #4a5568;
+      --text-secondary: #9da4b0;
+      --neu-text-secondary: #9da4b0;
+
+      /* Typography Sizes */
+      --text-h1: 22px;
+      /* Title / H1: 20-22px */
+      --text-h2: 18px;
+      /* Subtitle / H2: 16-18px */
+      --text-body: 15px;
+      /* Regular text: 14-15px */
+      --text-meta: 13px;
+      /* Secondary / Metadata: 12-13px */
+
+      /* Icon Sizes */
+      --icon-primary: 18px;
+      /* Navigation icons */
+      --icon-secondary: 14px;
+      /* Action icons */
+      --icon-stroke: 1px;
+      /* Consistent stroke width */
+
       --background: 210 20% 98%;
       --foreground: 222.2 84% 4.9%;
       --card: 0 0% 100%;
@@ -169,6 +192,48 @@
     .hover-animate:hover .icon-sleep {
       animation: icon-rock 2s ease-in-out infinite;
     }
+
+    /* Typography Classes */
+    .text-h1 {
+      font-size: var(--text-h1);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .text-h2 {
+      font-size: var(--text-h2);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .text-body {
+      font-size: var(--text-body);
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .text-meta {
+      font-size: var(--text-meta);
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Icon Classes */
+    .icon-primary {
+      width: var(--icon-primary);
+      height: var(--icon-primary);
+      stroke-width: var(--icon-stroke);
+    }
+
+    .icon-secondary {
+      width: var(--icon-secondary);
+      height: var(--icon-secondary);
+      stroke-width: var(--icon-stroke);
+    }
   </style>
   <script>
     tailwind.config = {
@@ -181,8 +246,11 @@
               light: 'var(--neu-light)',
               dark: 'var(--neu-dark)',
               text: 'var(--neu-text)',
+              'text-secondary': 'var(--neu-text-secondary)',
               accent: 'var(--neu-accent)',
             },
+            'text-primary': 'var(--text-primary)',
+            'text-secondary': 'var(--text-secondary)',
             border: "hsl(var(--border))",
             input: "hsl(var(--input))",
             ring: "hsl(var(--ring))",
@@ -216,6 +284,12 @@
               DEFAULT: "hsl(var(--card))",
               foreground: "hsl(var(--card-foreground))",
             },
+          },
+          fontSize: {
+            'h1': 'var(--text-h1)',
+            'h2': 'var(--text-h2)',
+            'body': 'var(--text-body)',
+            'meta': 'var(--text-meta)',
           },
           borderRadius: {
             lg: "var(--radius)",
