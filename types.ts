@@ -15,6 +15,7 @@ export interface BreathingPattern {
   name: string;
   description: string;
   recommendedDuration?: number; // Recommended session length in seconds
+  reps?: number; // Optional: Specific number of repetitions (overrides duration)
   restDuration?: number; // Optional rest between cycles
   phases: {
     inhale: number;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Ghost, Bell, Moon, Volume2, Shield, Check, VolumeX, Vibrate, Trash2, Plus, Pencil } from 'lucide-react';
+import { Ghost, Bell, Moon, Volume2, Shield, Check, VolumeX, Vibrate, Trash2, Plus, Pencil, Lock } from 'lucide-react';
 import { NeuCard } from '../components/Neu';
 import { ActivityChartCard, ChartRange } from '../components/ui/activity-chart-card';
 import { StorageService } from '../services/StorageService';
@@ -231,21 +231,28 @@ export const ProfileView: React.FC = () => {
 
       {/* User Login Card */}
       <NeuCard
-        className="flex items-center gap-4 cursor-pointer active:scale-95 transition-transform"
+        className={`flex items-center gap-4 cursor-pointer active:scale-95 transition-transform ${!isRegistered ? 'border-2 border-neu-accent/20' : ''}`}
         onClick={handleToggleRegistration}
       >
         <div className={`w-16 h-16 rounded-full shadow-neu-pressed flex items-center justify-center ${isRegistered ? 'bg-blue-100 text-blue-500' : 'bg-neu-base text-neu-dark'}`}>
           <Ghost size={32} strokeWidth={1} />
         </div>
         <div className="flex-1">
-          <h2 className="font-bold text-lg text-neu-text">
+          <h2 className="font-bold text-lg text-neu-text flex items-center gap-2">
             {isRegistered ? 'משתמש רשום' : 'משתמש אורח'}
+            {!isRegistered && <span className="text-xs bg-neu-accent text-white px-2 py-0.5 rounded-full">מוגבל</span>}
           </h2>
           <p className="text-sm text-gray-500">
-            {isRegistered ? 'הנתונים שלך נשמרים' : 'לחץ כדי להתחבר'}
+            {isRegistered ? 'הנתונים שלך נשמרים' : 'לחץ כדי לפתוח את כל הפיצ\'רים'}
           </p>
         </div>
-        {isRegistered && <Check size={20} className="text-blue-500" strokeWidth={1} />}
+        {isRegistered ? (
+          <Check size={20} className="text-blue-500" strokeWidth={1} />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-neu-accent flex items-center justify-center shadow-lg animate-pulse">
+            <Lock size={14} className="text-white" />
+          </div>
+        )}
       </NeuCard>
 
       {/* Stats Section with New Component */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Volume, Volume1, Volume2, VolumeX, SkipForward, ArrowRight, X } from 'lucide-react';
+import { Volume, Volume1, Volume2, VolumeX, SkipForward, ArrowRight, X, Heart, Mic } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BREATHING_PATTERNS, PHASE_LABELS, CATEGORIES } from '../constants';
 import { BreathingPhase } from '../types';
@@ -23,9 +23,14 @@ export const SessionView: React.FC = () => {
 
   // Initialize duration
   const initialDuration = useMemo(() => {
+    // For custom patterns, respect the creator's duration/reps
+    if (pattern.id.startsWith('custom_')) {
+      return pattern.recommendedDuration ?? DEFAULT_DURATION;
+    }
+    // For built-in, allow user preference override
     const userPref = StorageService.getUserDurationPreference();
     return userPref ?? pattern.recommendedDuration ?? DEFAULT_DURATION;
-  }, [pattern.recommendedDuration]);
+  }, [pattern]);
 
   // Cycle Calculation
   const cycleDuration = useMemo(() => {
@@ -34,15 +39,20 @@ export const SessionView: React.FC = () => {
   }, [pattern]);
 
   const totalCycles = useMemo(() => {
+    // Priority 1: Explicit Reps (Custom Patterns)
+    if (pattern.reps) return pattern.reps;
+
+    // Priority 2: Calculated from duration
     return Math.max(1, Math.floor(initialDuration / cycleDuration));
-  }, [initialDuration, cycleDuration]);
+  }, [pattern, initialDuration, cycleDuration]);
 
   // State
   const [playbackState, setPlaybackState] = useState<'idle' | 'running' | 'paused' | 'completed'>('idle');
-  const [remainingSessionTime, setRemainingSessionTime] = useState(initialDuration);
+  // Removed remainingSessionTime state
   const [currentCycle, setCurrentCycle] = useState(1);
   const [isPressed, setIsPressed] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // Phase State
   const [currentPhase, setCurrentPhase] = useState<BreathingPhase>(BreathingPhase.Inhale);
@@ -50,7 +60,8 @@ export const SessionView: React.FC = () => {
   const [phaseProgress, setPhaseProgress] = useState(0);
 
   // Volume State
-  const [volume, setVolume] = useState(() => StorageService.getUserVolumePreference());
+  const [musicVolume, setMusicVolume] = useState(() => StorageService.getMusicVolume());
+  const [voiceVolume, setVoiceVolume] = useState(() => StorageService.getVoiceVolume());
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const volumeSliderRef = useRef<HTMLDivElement>(null);
   const isDraggingVolumeRef = useRef(false);
@@ -71,6 +82,18 @@ export const SessionView: React.FC = () => {
   useEffect(() => {
     playbackStateRef.current = playbackState;
   }, [playbackState]);
+
+  // Check Favorite Status
+  useEffect(() => {
+    const favs = StorageService.getFavorites();
+    setIsFavorite(favs.includes(pattern.id));
+  }, [pattern.id]);
+
+  const handleToggleFavorite = () => {
+    const newFavs = StorageService.toggleFavorite(pattern.id);
+    setIsFavorite(newFavs.includes(pattern.id));
+    HapticService.trigger(10);
+  };
 
   // Countdown Logic
   useEffect(() => {
@@ -143,16 +166,19 @@ export const SessionView: React.FC = () => {
 
     if (!sessionSavedRef.current) {
       sessionSavedRef.current = true;
+      // Calculate actual duration based on cycles completed
+      const actualDuration = totalCycles * cycleDuration;
+
       StorageService.saveSession({
         id: startTimeRef.current.toString(),
         patternId: pattern.id,
         patternName: pattern.name,
-        durationSeconds: initialDuration,
+        durationSeconds: actualDuration,
         timestamp: Date.now(),
         isCompleted: true
       });
     }
-  }, [initialDuration, pattern]);
+  }, [totalCycles, cycleDuration, pattern]);
 
   // Main Animation Loop
   useEffect(() => {
@@ -167,19 +193,8 @@ export const SessionView: React.FC = () => {
       const delta = (timestamp - lastFrameTime.current) / 1000;
       lastFrameTime.current = timestamp;
 
-      // 1. Update Session Timer
+      // 1. Update Session Timer (Just for elapsed tracking if needed, but logic is now cycle based)
       sessionElapsedRef.current += delta;
-      if (sessionElapsedRef.current >= 1) {
-        const secondsPassed = Math.floor(sessionElapsedRef.current);
-        sessionElapsedRef.current -= secondsPassed;
-        setRemainingSessionTime(prev => {
-          if (prev - secondsPassed <= 0) {
-            completeSession();
-            return 0;
-          }
-          return prev - secondsPassed;
-        });
-      }
 
       // 2. Update Phase
       const totalPhaseDuration = getPhaseDuration(currentPhase);
@@ -203,7 +218,14 @@ export const SessionView: React.FC = () => {
 
           // Check for Cycle Increment
           if (next === BreathingPhase.Inhale && currentPhase !== BreathingPhase.Inhale) {
-            setCurrentCycle(c => c + 1);
+            const nextCycle = currentCycle + 1;
+            setCurrentCycle(nextCycle);
+
+            // Check for Completion based on Reps
+            if (nextCycle > totalCycles) {
+              completeSession();
+              return; // Stop loop
+            }
           }
 
           setCurrentPhase(next);
@@ -246,53 +268,13 @@ export const SessionView: React.FC = () => {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [playbackState, currentPhase, getPhaseDuration, getNextPhase, completeSession]);
+  }, [playbackState, currentPhase, getPhaseDuration, getNextPhase, completeSession, currentCycle, totalCycles]);
 
   // Volume Control Logic
-  const handleVolumeChange = useCallback((clientY: number) => {
-    if (!volumeSliderRef.current) return;
-    const rect = volumeSliderRef.current.getBoundingClientRect();
-    const height = rect.height;
-    const bottom = rect.bottom;
-    const relativeY = bottom - clientY;
-    const percentage = Math.max(0, Math.min(100, (relativeY / height) * 100));
-    const newVol = Math.round(percentage);
-    setVolume(newVol);
-    StorageService.setUserVolumePreference(newVol);
-    // Apply real-time to AudioService
-    AudioService.setBackgroundVolume(newVol);
-  }, []);
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent | TouchEvent) => {
-      if (!isDraggingVolumeRef.current) return;
-      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
-      handleVolumeChange(clientY);
-    };
-
-    const handleUp = () => {
-      isDraggingVolumeRef.current = false;
-    };
-
-    if (showVolumeSlider) {
-      window.addEventListener('mousemove', handleMove);
-      window.addEventListener('touchmove', handleMove);
-      window.addEventListener('mouseup', handleUp);
-      window.addEventListener('touchend', handleUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('touchmove', handleMove);
-      window.removeEventListener('mouseup', handleUp);
-      window.removeEventListener('touchend', handleUp);
-    };
-  }, [showVolumeSlider, handleVolumeChange]);
-
   const getVolumeIcon = () => {
-    if (volume === 0) return <VolumeX size={24} strokeWidth={1} />;
-    if (volume < 30) return <Volume size={24} strokeWidth={1} />;
-    if (volume < 70) return <Volume1 size={24} strokeWidth={1} />;
+    if (musicVolume === 0) return <VolumeX size={24} strokeWidth={1} />;
+    if (musicVolume < 30) return <Volume size={24} strokeWidth={1} />;
+    if (musicVolume < 70) return <Volume1 size={24} strokeWidth={1} />;
     return <Volume2 size={24} strokeWidth={1} />;
   };
 
@@ -304,10 +286,19 @@ export const SessionView: React.FC = () => {
 
     if (playbackState === 'idle') {
       setCountdown(3);
+      // Pre-load/Resume Audio Context if needed (though we play on 'running')
       return;
     }
 
-    setPlaybackState(prev => prev === 'running' ? 'paused' : 'running');
+    const nextState = playbackState === 'running' ? 'paused' : 'running';
+    setPlaybackState(nextState);
+
+    // Direct Audio Interaction on Click (Fix for Autoplay Policy)
+    if (nextState === 'running') {
+      AudioService.playBackgroundMusic(0);
+    } else {
+      // Optional: We could pause here, but the useEffect handles volume ducking
+    }
   }, [playbackState]);
 
   const handleSkip = useCallback((e: React.MouseEvent) => {
@@ -335,7 +326,7 @@ export const SessionView: React.FC = () => {
   const handleExit = useCallback(() => {
     HapticService.trigger(10);
     // If exiting early, save partial progress
-    const timeSpent = initialDuration - remainingSessionTime;
+    const timeSpent = sessionElapsedRef.current;
 
     if (timeSpent > 5 && playbackState !== 'completed' && !sessionSavedRef.current) {
       StorageService.saveSession({
@@ -357,7 +348,7 @@ export const SessionView: React.FC = () => {
     } else {
       navigate('/breathe');
     }
-  }, [initialDuration, remainingSessionTime, playbackState, pattern, navigate]);
+  }, [playbackState, pattern, navigate]);
 
   const handleNextExercise = useCallback(() => {
     if (nextExercise) {
@@ -402,7 +393,6 @@ export const SessionView: React.FC = () => {
 
   // Re-init on pattern change
   useEffect(() => {
-    setRemainingSessionTime(initialDuration);
     setPlaybackState('idle');
     setCountdown(null);
     setCurrentCycle(1);
@@ -415,12 +405,6 @@ export const SessionView: React.FC = () => {
   }, [pattern, initialDuration]);
 
   // Visual Helpers
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
   const getCircleScale = () => {
     if (currentPhase === BreathingPhase.Rest) return 1.0;
 
@@ -508,6 +492,21 @@ export const SessionView: React.FC = () => {
         </NeuIconButton>
       </div>
 
+      {/* Favorites Button - Top Right (NEW) */}
+      <div className="absolute top-6 right-6 z-50">
+        <NeuIconButton
+          onClick={handleToggleFavorite}
+          className="w-12 h-12"
+          aria-label="הוסף למועדפים"
+        >
+          <Heart
+            size={20}
+            strokeWidth={isFavorite ? 0 : 1}
+            className={`${isFavorite ? 'fill-red-500 text-red-500' : 'text-neu-text'}`}
+          />
+        </NeuIconButton>
+      </div>
+
       {/* Top Info */}
       <div className="pt-10 pb-4 flex flex-col justify-center items-center z-10 space-y-1 px-6 text-center mt-4">
         <h1 className="text-neu-text font-bold text-lg">{pattern.name}</h1>
@@ -586,27 +585,22 @@ export const SessionView: React.FC = () => {
               </span>
             </div>
 
-            {/* 4. Very Bottom: Timer */}
-            <div className="flex-1 flex items-end justify-center pb-6">
-              <span className="text-lg font-mono text-neu-text/70 opacity-80">
-                {formatTime(remainingSessionTime)}
-              </span>
-            </div>
+            {/* 4. Very Bottom: Spacer (Timer Removed) */}
+            <div className="flex-1"></div>
           </div>
         </button>
       </div>
 
       {/* Bottom Controls */}
-      <div className="pb-12 px-8 flex flex-col items-center z-10 w-full max-w-xs mx-auto">
+      <div className="pb-12 px-8 flex flex-col items-center z-10 w-full max-w-xs mx-auto space-y-4">
 
-        {/* Volume Slider */}
-        <div className="w-full flex items-center gap-4 mb-6 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
+        {/* Music Volume Slider */}
+        <div className="w-full flex items-center gap-4 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
           <div
             onClick={() => {
               const newMuted = !AudioService.isMuted();
               AudioService.setMuted(newMuted);
-              // Force update to reflect mute state change
-              setVolume(newMuted ? 0 : StorageService.getMusicVolume());
+              setMusicVolume(newMuted ? 0 : StorageService.getMusicVolume());
             }}
             className="cursor-pointer text-neu-text/70 hover:text-neu-text transition-colors"
           >
@@ -617,11 +611,31 @@ export const SessionView: React.FC = () => {
             type="range"
             min="0"
             max="100"
-            value={AudioService.isMuted() ? 0 : volume}
+            value={AudioService.isMuted() ? 0 : musicVolume}
             onChange={(e) => {
               const newVol = Number(e.target.value);
-              setVolume(newVol);
+              setMusicVolume(newVol);
               AudioService.setBackgroundVolume(newVol);
+            }}
+            className="flex-1 h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
+          />
+        </div>
+
+        {/* Voice Volume Slider (NEW) */}
+        <div className="w-full flex items-center gap-4 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
+          <div className="text-neu-text/70">
+            <Mic size={20} strokeWidth={1} />
+          </div>
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={voiceVolume}
+            onChange={(e) => {
+              const newVol = Number(e.target.value);
+              setVoiceVolume(newVol);
+              AudioService.setVoiceVolume(newVol);
             }}
             className="flex-1 h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
           />

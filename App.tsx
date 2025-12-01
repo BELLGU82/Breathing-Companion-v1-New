@@ -8,6 +8,13 @@ import { CategoryView } from './views/CategoryView';
 import { BottomNavigation } from './components/BottomNavigation';
 import { StorageService } from './services/StorageService';
 
+import { NotificationService } from './services/NotificationService';
+import { HistoryView } from './views/HistoryView'; // Added for routing if needed, but wait, HistoryView isn't in routes yet?
+// Actually, HistoryView is likely a sub-view or separate route. Let's check routes.
+// The routes show Home, Breathe, Category, Session, Profile.
+// HistoryView was found in file list but not in App.tsx routes.
+// I will just add the NotificationService check for now.
+
 const App: React.FC = () => {
   useEffect(() => {
     // Initialize Dark Mode
@@ -17,6 +24,9 @@ const App: React.FC = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    // Check for missed reminders
+    NotificationService.checkAndSchedule();
   }, []);
 
   return (

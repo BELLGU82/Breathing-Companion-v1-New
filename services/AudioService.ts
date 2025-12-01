@@ -44,24 +44,36 @@ export const AudioService = {
 
   // Background Music
   playBackgroundMusic: (trackIndex: number = 0) => {
-    if (AudioService.isMuted()) return;
+    if (AudioService.isMuted()) {
+      console.log('AudioService: Muted, skipping playback.');
+      return;
+    }
 
     try {
       // Stop existing music if playing
       AudioService.stopBackgroundMusic();
 
+      const trackUrl = MUSIC_TRACKS[trackIndex] || MUSIC_TRACKS[0];
+      console.log(`AudioService: Attempting to play track: ${trackUrl}`);
+
       // Create new audio element
-      backgroundMusic = new Audio(MUSIC_TRACKS[trackIndex] || MUSIC_TRACKS[0]);
+      backgroundMusic = new Audio(trackUrl);
       backgroundMusic.loop = true;
       backgroundMusic.volume = AudioService.getMusicVolume() / 100;
       backgroundMusic.muted = AudioService.isMuted();
 
       // Play
-      backgroundMusic.play().catch(err => {
-        console.debug('Background music autoplay prevented:', err);
-      });
+      const playPromise = backgroundMusic.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.error('AudioService: Autoplay prevented or error:', err);
+          // Fallback: Try to play again on next user interaction if possible, 
+          // or just log it for now.
+        });
+      }
     } catch (error) {
-      console.debug('Error playing background music:', error);
+      console.error('AudioService: Critical error playing background music:', error);
     }
   },
 
@@ -120,7 +132,10 @@ export const AudioService = {
           [BreathingPhase.Finished]: 'סיימנו'
         };
 
-        utterance.text = cues[phase];
+        const text = cues[phase];
+        console.log(`AudioService: Playing voice cue for ${phase}: "${text}"`);
+
+        utterance.text = text;
         utterance.lang = 'he-IL';
         utterance.rate = 0.9;
         utterance.pitch = 1.0;
@@ -128,9 +143,11 @@ export const AudioService = {
 
         window.speechSynthesis.cancel(); // Cancel previous
         window.speechSynthesis.speak(utterance);
+      } else {
+        console.warn('AudioService: SpeechSynthesis not supported in this browser.');
       }
     } catch (error) {
-      console.debug('Error playing voice cue:', error);
+      console.error('AudioService: Error playing voice cue:', error);
     }
   },
 
