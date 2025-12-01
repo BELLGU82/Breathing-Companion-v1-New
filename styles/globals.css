@@ -19,14 +19,14 @@
   --neu-text-secondary: #9da4b0;
 
   /* Typography Sizes */
-  --text-h1: 20px;
-  --text-h2: 18px;
-  --text-body: 15px;
+  --text-h1: 15px;
+  --text-h2: 14px;
+  --text-body: 13px;
   --text-meta: 13px;
 
   /* Icon Sizes */
   --icon-primary: 18px;
-  --icon-secondary: 14px;
+  --icon-secondary: 16px;
   --icon-stroke: 1px;
 
   --background: 210 20% 98%;
@@ -175,14 +175,14 @@ body {
 
 .text-h1 {
   font-size: var(--text-h1);
-  font-weight: 700;
+  font-weight: 400;
   color: var(--text-primary);
   line-height: 1.2;
 }
 
 .text-h2 {
   font-size: var(--text-h2);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-primary);
   line-height: 1.3;
 }
