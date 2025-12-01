@@ -279,7 +279,6 @@ export const BreatheView: React.FC = () => {
                   <NeuButton
                     onClick={() => setShowLoginGate(false)}
                     className="w-full text-gray-500 h-12"
-                    variant="secondary"
                   >
                     אולי אחר כך
                   </NeuButton>
@@ -416,7 +415,6 @@ export const BreatheView: React.FC = () => {
                     <NeuButton
                       onClick={() => navigate('/category/custom')}
                       className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto"
-                      variant="secondary"
                     >
                       <List size={24} strokeWidth={1} />
                       <span className="text-sm font-bold">לרשימת תרגילים</span>

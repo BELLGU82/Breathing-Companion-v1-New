@@ -29,7 +29,7 @@ export const HomeView: React.FC = () => {
   }, []);
 
   // Stats State
-  const [chartStats, setChartStats] = useState<ChartStats>({ totalMinutes: 0, trendPercentage: 0, data: [] });
+  const [chartStats, setChartStats] = useState<ChartStats>({ totalMinutes: 0, totalSessions: 0, data: [] });
   const [selectedRange, setSelectedRange] = useState<ChartRange>('weekly');
 
   const loadStats = (range: ChartRange) => {
@@ -130,7 +130,7 @@ export const HomeView: React.FC = () => {
             title="הפעילות שלי"
             totalValue={`${chartStats.totalMinutes} דק'`}
             data={chartStats.data}
-            trendPercentage={chartStats.trendPercentage}
+            totalSessions={chartStats.totalSessions}
             selectedRange={selectedRange}
             onRangeChange={setSelectedRange}
             className="w-full bg-neu-base shadow-neu-flat border-none"

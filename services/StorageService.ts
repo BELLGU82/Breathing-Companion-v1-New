@@ -331,15 +331,38 @@ export const StorageService = {
 
     let data: ChartDataPoint[] = [];
     let currentTotal = 0;
-    let prevTotal = 0;
+    let currentSessionsCount = 0;
 
-    if (range === 'weekly') {
+    if (range === 'daily') {
+      // Daily view: 4-hour blocks (0-4, 4-8, 8-12, 12-16, 16-20, 20-24)
+      const startOfDay = new Date(now);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const blocks = new Array(6).fill(0);
+      const blockLabels = ['00-04', '04-08', '08-12', '12-16', '16-20', '20-24'];
+
+      sessions.forEach(s => {
+        const sDate = new Date(s.timestamp);
+        if (sDate >= startOfDay) {
+          const hour = sDate.getHours();
+          const blockIndex = Math.floor(hour / 4);
+          if (blockIndex >= 0 && blockIndex < 6) {
+            blocks[blockIndex] += s.durationSeconds;
+            currentTotal += s.durationSeconds;
+            currentSessionsCount++;
+          }
+        }
+      });
+
+      data = blocks.map((val, idx) => ({
+        label: blockLabels[idx],
+        value: Math.floor(val / 60)
+      }));
+    }
+    else if (range === 'weekly') {
       const startOfWeek = new Date(now);
       startOfWeek.setDate(now.getDate() - now.getDay()); // Go to Sunday
       startOfWeek.setHours(0, 0, 0, 0);
-
-      const startOfPrevWeek = new Date(startOfWeek);
-      startOfPrevWeek.setDate(startOfPrevWeek.getDate() - 7);
 
       const days = new Array(7).fill(0);
 
@@ -348,8 +371,7 @@ export const StorageService = {
         if (sDate >= startOfWeek) {
           days[sDate.getDay()] += s.durationSeconds;
           currentTotal += s.durationSeconds;
-        } else if (sDate >= startOfPrevWeek && sDate < startOfWeek) {
-          prevTotal += s.durationSeconds;
+          currentSessionsCount++;
         }
       });
 
@@ -363,9 +385,6 @@ export const StorageService = {
       startOfPeriod.setDate(now.getDate() - 27); // 28 days total
       startOfPeriod.setHours(0, 0, 0, 0);
 
-      const startOfPrevPeriod = new Date(startOfPeriod);
-      startOfPrevPeriod.setDate(startOfPrevPeriod.getDate() - 28);
-
       const weeks = [0, 0, 0, 0]; // Week 1 to Week 4
 
       sessions.forEach(s => {
@@ -374,50 +393,22 @@ export const StorageService = {
 
         if (ts >= startOfPeriod.getTime()) {
           currentTotal += s.durationSeconds;
+          currentSessionsCount++;
           const diffDays = Math.floor((ts - startOfPeriod.getTime()) / (1000 * 60 * 60 * 24));
           const weekIdx = Math.floor(diffDays / 7);
           if (weekIdx >= 0 && weekIdx < 4) weeks[weekIdx] += s.durationSeconds;
-        } else if (ts >= startOfPrevPeriod.getTime() && ts < startOfPeriod.getTime()) {
-          prevTotal += s.durationSeconds;
         }
       });
 
       data = weeks.map((val, idx) => ({
-        label: `שבוע ${idx + 1}`,
+        label: `${idx + 1}`, // Just numbers as requested
         value: Math.floor(val / 60)
       }));
-    }
-    else if (range === 'yearly') {
-      const currentYear = now.getFullYear();
-
-      const months = new Array(12).fill(0);
-
-      sessions.forEach(s => {
-        const sDate = new Date(s.timestamp);
-        if (sDate.getFullYear() === currentYear) {
-          months[sDate.getMonth()] += s.durationSeconds;
-          currentTotal += s.durationSeconds;
-        } else if (sDate.getFullYear() === currentYear - 1) {
-          prevTotal += s.durationSeconds;
-        }
-      });
-
-      data = months.map((val, idx) => ({
-        label: MONTH_LABELS[idx],
-        value: Math.floor(val / 60)
-      }));
-    }
-
-    let trend = 0;
-    if (prevTotal > 0) {
-      trend = Math.round(((currentTotal - prevTotal) / prevTotal) * 100);
-    } else if (currentTotal > 0) {
-      trend = 100;
     }
 
     return {
       totalMinutes: Math.floor(currentTotal / 60),
-      trendPercentage: trend,
+      totalSessions: currentSessionsCount,
       data
     };
   }

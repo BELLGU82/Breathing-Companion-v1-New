@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Shell, Wind, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HapticService } from '../services/HapticService';
 
 export const BottomNavigation: React.FC = () => {
   const navigate = useNavigate();
@@ -16,8 +17,11 @@ export const BottomNavigation: React.FC = () => {
     const [isHovered, setHovered] = useState(false);
 
     return (
-      <button 
-        onClick={() => navigate(path)}
+      <button
+        onClick={() => {
+          HapticService.trigger();
+          navigate(path);
+        }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocus={() => setHovered(true)}
@@ -27,39 +31,39 @@ export const BottomNavigation: React.FC = () => {
       >
         {/* Active Indicator - Circular Background */}
         {isActive && (
-            <motion.div
-                layoutId="navBubble"
-                className="absolute w-12 h-12 rounded-full bg-neu-base shadow-neu-pressed z-0"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
+          <motion.div
+            layoutId="navBubble"
+            className="absolute w-12 h-12 rounded-full bg-neu-base shadow-neu-pressed z-0"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          />
         )}
 
         {/* Floating Tooltip (Only on Hover) */}
         <AnimatePresence>
-            {isHovered && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10, x: '-50%' }}
-                    animate={{ opacity: 1, y: -7, x: '-50%' }}
-                    exit={{ opacity: 0, y: 10, x: '-50%' }}
-                    className="absolute left-1/2 top-0 bg-neu-base shadow-neu-flat border border-white/40 px-3 py-1 rounded-lg text-[10px] font-bold text-neu-text whitespace-nowrap z-50 pointer-events-none"
-                >
-                    {label}
-                </motion.div>
-            )}
+          {isHovered && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, x: '-50%' }}
+              animate={{ opacity: 1, y: -7, x: '-50%' }}
+              exit={{ opacity: 0, y: 10, x: '-50%' }}
+              className="absolute left-1/2 top-0 bg-neu-base shadow-neu-flat border border-white/40 px-3 py-1 rounded-lg text-[10px] font-bold text-neu-text whitespace-nowrap z-50 pointer-events-none"
+            >
+              {label}
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Icon */}
         <motion.div
-            className="z-10 relative"
-            animate={{ 
-                scale: isHovered ? 1.2 : 1,
-                color: isActive ? '#4a5568' : '#9CA3AF'
-            }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          className="z-10 relative"
+          animate={{
+            scale: isHovered ? 1.2 : 1,
+            color: isActive ? '#4a5568' : '#9CA3AF'
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-            <Icon size={26} strokeWidth={isActive ? 1.2 : 1} />
+          <Icon size={26} strokeWidth={isActive ? 1.2 : 1} />
         </motion.div>
       </button>
     );

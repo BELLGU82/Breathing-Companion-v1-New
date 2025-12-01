@@ -29,23 +29,23 @@ interface ActivityChartCardProps {
   title?: string;
   totalValue: string;
   data: ActivityDataPoint[];
-  trendPercentage?: number;
+  totalSessions?: number;
   className?: string;
   selectedRange: ChartRange;
   onRangeChange: (range: ChartRange) => void;
 }
 
 const RANGE_LABELS: Record<ChartRange, string> = {
+  daily: "יומי",
   weekly: "שבועי",
-  monthly: "חודשי",
-  yearly: "שנתי"
+  monthly: "חודשי"
 };
 
 export const ActivityChartCard = ({
   title = "פעילות",
   totalValue,
   data,
-  trendPercentage = 0,
+  totalSessions = 0,
   className,
   selectedRange,
   onRangeChange
@@ -89,12 +89,12 @@ export const ActivityChartCard = ({
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle id="activity-card-title" className="text-neu-text">{title}</CardTitle>
-          <DropdownMenu>
+          <DropdownMenu dir="rtl">
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-1 text-xs px-2 py-1 h-auto text-neu-text/70 outline-none hover:bg-transparent hover:text-neu-text focus:ring-0"
+                className="flex items-center gap-1 text-xs px-2 py-1 h-auto text-neu-text-secondary outline-none hover:bg-transparent hover:text-neu-text focus:ring-0"
                 aria-haspopup="true"
               >
                 {RANGE_LABELS[selectedRange]}
@@ -106,7 +106,7 @@ export const ActivityChartCard = ({
                 <DropdownMenuItem
                   key={range}
                   onSelect={() => onRangeChange(range)}
-                  className="text-neu-text focus:bg-gray-200/50 cursor-pointer"
+                  className="text-neu-text focus:bg-gray-200/50 cursor-pointer justify-start"
                 >
                   {RANGE_LABELS[range]}
                 </DropdownMenuItem>
@@ -118,25 +118,11 @@ export const ActivityChartCard = ({
       <CardContent>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col">
-            <p className="text-4xl font-bold tracking-tighter text-neu-text">
+            <p className="text-[22px] font-bold tracking-tighter text-neu-text">
               {totalValue}
             </p>
-            <CardDescription className="flex items-center gap-1 mt-1">
-              {trendPercentage > 0 && <TrendingUp className="h-4 w-4 text-emerald-500" />}
-              {trendPercentage < 0 && <TrendingDown className="h-4 w-4 text-red-500" />}
-              {trendPercentage === 0 && <Minus className="h-4 w-4 text-gray-400" />}
-
-              <span className={cn(
-                "font-medium",
-                trendPercentage > 0 ? "text-emerald-500" :
-                  trendPercentage < 0 ? "text-red-500" : "text-gray-400"
-              )}>
-                {Math.abs(trendPercentage)}%
-              </span>
-              <span className="text-gray-400">
-                {selectedRange === 'weekly' ? 'משבוע שעבר' :
-                  selectedRange === 'monthly' ? 'מחודש שעבר' : 'משנה שעברה'}
-              </span>
+            <CardDescription className="flex items-center gap-1 mt-1 text-[13px] text-neu-text-secondary">
+              סה״כ {totalSessions} תרגילים
             </CardDescription>
           </div>
 
@@ -157,19 +143,19 @@ export const ActivityChartCard = ({
                   className="flex h-full w-full flex-col items-center justify-end gap-2 group"
                   role="presentation"
                 >
-                  <span className="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity absolute -translate-y-6 bg-white/50 px-1 rounded pointer-events-none">
+                  <span className="text-[10px] text-neu-text-secondary opacity-0 group-hover:opacity-100 transition-opacity absolute -translate-y-6 bg-white/50 px-1 rounded pointer-events-none">
                     {item.value}
                   </span>
 
                   <motion.div
-                    className="w-full max-w-[24px] rounded-md bg-[#4a5568] hover:opacity-80 transition-opacity relative"
+                    className="w-full max-w-[24px] rounded-full bg-neu-text/10 backdrop-blur-sm hover:bg-neu-accent/50 transition-colors relative shadow-neu-pressed"
                     style={{
                       height: `${Math.max(4, heightPercent)}%`,
                     }}
                     variants={barVariants}
                     aria-label={`${item.label}: ${item.value} דקות`}
                   />
-                  <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis max-w-[30px] text-center">
+                  <span className="text-[10px] text-neu-text-secondary whitespace-nowrap overflow-hidden text-ellipsis max-w-[30px] text-center">
                     {item.label}
                   </span>
                 </div>

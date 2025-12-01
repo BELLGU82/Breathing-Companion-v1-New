@@ -120,7 +120,7 @@ export const ProfileView: React.FC = () => {
 
   // Stats State
   const [selectedRange, setSelectedRange] = useState<ChartRange>('weekly');
-  const [chartStats, setChartStats] = useState<ChartStats>({ totalMinutes: 0, trendPercentage: 0, data: [] });
+  const [chartStats, setChartStats] = useState<ChartStats>({ totalMinutes: 0, totalSessions: 0, data: [] });
 
   useEffect(() => {
     const registered = StorageService.isRegistered();
@@ -206,7 +206,7 @@ export const ProfileView: React.FC = () => {
     <div className="flex flex-col py-4 border-b border-gray-200/50 last:border-0">
       <div className="flex items-center justify-between cursor-pointer" onClick={(e) => toggle && toggle(e)}>
         <div className="flex items-center gap-4">
-          <div className="text-gray-500"><Icon size={20} strokeWidth={1} className="text-neu-text" /></div>
+          <div className="text-neu-text"><Icon size={20} strokeWidth={1} className="text-neu-text" /></div>
           <span className="text-neu-text font-medium">{label}</span>
         </div>
         {toggle && (
@@ -226,7 +226,7 @@ export const ProfileView: React.FC = () => {
   return (
     <div className="flex flex-col h-full p-6 space-y-6 overflow-y-auto pb-32">
       <div className="mt-2">
-        <h1 className="text-2xl font-bold text-neu-text">פרופיל אישי</h1>
+        <h1 className="text-[22px] font-bold text-neu-text">פרופיל אישי</h1>
       </div>
 
       {/* User Login Card */}
@@ -238,11 +238,11 @@ export const ProfileView: React.FC = () => {
           <Ghost size={22} strokeWidth={1} />
         </div>
         <div className="flex-1">
-          <h2 className="font-bold text-lg text-neu-text flex items-center gap-2">
+          <h2 className="font-bold text-[18px] text-neu-text flex items-center gap-2">
             {isRegistered ? 'משתמש רשום' : 'משתמש אורח'}
             {!isRegistered && <span className="text-xs bg-neu-accent text-white px-2 py-0.5 rounded-full">מוגבל</span>}
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-[13px] text-neu-text-secondary">
             {isRegistered ? 'הנתונים שלך נשמרים' : 'לחץ כדי לפתוח את כל הפיצ\'רים'}
           </p>
         </div>
@@ -250,7 +250,7 @@ export const ProfileView: React.FC = () => {
           <Check size={20} className="text-blue-500" strokeWidth={1} />
         ) : (
           <div className="w-8 h-8 rounded-full bg-neu-accent flex items-center justify-center shadow-lg animate-pulse">
-            <Lock size={14} className="text-white" />
+            <Lock size={14} className="text-white" strokeWidth={1} />
           </div>
         )}
       </NeuCard>
@@ -272,7 +272,7 @@ export const ProfileView: React.FC = () => {
 
       {/* Settings List */}
       <div>
-        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 mr-2">הגדרות</h3>
+        <h3 className="text-[13px] font-bold text-neu-text-secondary uppercase tracking-wider mb-3 mr-2">הגדרות</h3>
         <NeuCard>
           {/* Reminders Section - Only for Registered Users */}
           {isRegistered ? (
@@ -306,13 +306,13 @@ export const ProfileView: React.FC = () => {
                           onClick={() => handleEditReminder(reminder)}
                           className="p-2 text-gray-400 hover:text-neu-accent transition-colors"
                         >
-                          <Pencil size={12} />
+                          <Pencil size={12} strokeWidth={1} />
                         </button>
                         <button
                           onClick={() => handleDeleteReminder(reminder.id)}
                           className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         >
-                          <Trash2 size={12} />
+                          <Trash2 size={12} strokeWidth={1} />
                         </button>
                       </div>
                     </div>
@@ -382,7 +382,7 @@ export const ProfileView: React.FC = () => {
                       }}
                       className="w-full py-3 flex items-center justify-center gap-2 text-neu-accent font-medium bg-neu-base rounded-xl shadow-neu-flat active:shadow-neu-pressed transition-all"
                     >
-                      <Plus size={20} />
+                      <Plus size={20} strokeWidth={1} />
                       <span>הוסף תזכורת חדשה</span>
                     </button>
                   )}
@@ -397,7 +397,7 @@ export const ProfileView: React.FC = () => {
               value={false}
             >
               <div className="bg-gray-50 p-3 rounded-lg text-center">
-                <p className="text-sm text-gray-500 mb-2">הירשם כדי להפעיל תזכורות אישיות</p>
+                <p className="text-[13px] text-neu-text-secondary mb-2">הירשם כדי להפעיל תזכורות אישיות</p>
                 <button
                   onClick={handleToggleRegistration}
                   className="text-xs text-neu-accent font-bold hover:underline"
@@ -429,7 +429,7 @@ export const ProfileView: React.FC = () => {
             {soundsEnabled && (
               <>
                 <div className="flex flex-col gap-1 animate-in slide-in-from-top-2 duration-200">
-                  <span className="text-xs text-gray-400">מוזיקה</span>
+                  <span className="text-xs text-neu-text-secondary">מוזיקה</span>
                   <div className="flex items-center gap-4">
                     <span className="text-xs text-gray-400 w-6">0</span>
                     <input
@@ -445,7 +445,7 @@ export const ProfileView: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 animate-in slide-in-from-top-2 duration-200 delay-75">
-                  <span className="text-xs text-gray-400">הדרכה קולית</span>
+                  <span className="text-xs text-neu-text-secondary">הדרכה קולית</span>
                   <div className="flex items-center gap-4">
                     <span className="text-xs text-gray-400 w-6">0</span>
                     <input
@@ -469,7 +469,7 @@ export const ProfileView: React.FC = () => {
       <div>
         <NeuCard>
           <SettingItem icon={Shield} label="מדיניות פרטיות" />
-          <div className="py-4 text-center text-xs text-gray-400">
+          <div className="py-4 text-center text-xs text-neu-text-secondary">
             Neshima App v1.3
           </div>
         </NeuCard>

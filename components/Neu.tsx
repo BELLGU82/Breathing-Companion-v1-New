@@ -1,76 +1,54 @@
 import React from 'react';
+import { cn } from '../lib/utils';
 
-interface NeuProps {
-  children?: React.ReactNode;
-  className?: string;
-  onClick?: (event: React.MouseEvent<any>) => void;
-  active?: boolean;
-}
+// Neumorphic Card Component
+export const NeuCard = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+    <div
+        ref={ref}
+        className={cn(
+            "bg-neu-base rounded-2xl shadow-neu-flat p-6 transition-all duration-200",
+            className
+        )}
+        {...props}
+    />
+));
+NeuCard.displayName = "NeuCard";
 
-export const NeuCard: React.FC<NeuProps> = ({ children, className = '', onClick }) => {
-  return (
-    <div 
-      onClick={onClick}
-      className={`bg-neu-base rounded-2xl shadow-neu-flat p-6 ${className} ${onClick ? 'cursor-pointer active:shadow-neu-pressed transition-all duration-200' : ''}`}
-    >
-      {children}
-    </div>
-  );
-};
-
-export const NeuButton: React.FC<NeuProps & { size?: 'sm' | 'md' | 'lg', variant?: 'primary' | 'danger' | 'secondary', disabled?: boolean }> = ({ 
-  children, 
-  className = '', 
-  onClick, 
-  active = false,
-  size = 'md',
-  variant = 'primary',
-  disabled = false
-}) => {
-  const sizeClasses = {
-    sm: 'p-2',
-    md: 'p-4',
-    lg: 'p-6'
-  };
-  
-  const textColors = {
-    primary: 'text-neu-text',
-    danger: 'text-red-500',
-    secondary: 'text-gray-500'
-  };
-
-  return (
+// Neumorphic Button Component
+export const NeuButton = React.forwardRef<
+    HTMLButtonElement,
+    React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
     <button
-      onClick={!disabled ? onClick : undefined}
-      disabled={disabled}
-      className={`
-        rounded-xl font-medium outline-none 
-        transition-all duration-200 ease-in-out select-none flex items-center justify-center
-        ${sizeClasses[size]}
-        ${active ? 'shadow-neu-pressed text-neu-accent' : 'shadow-neu-flat bg-neu-base'}
-        ${textColors[variant]}
-        ${className}
-        ${disabled ? 'opacity-50 cursor-not-allowed shadow-none' : 'active:shadow-neu-pressed'}
-      `}
-    >
-      {children}
-    </button>
-  );
-};
+        ref={ref}
+        className={cn(
+            "bg-neu-base rounded-xl shadow-neu-flat px-6 py-3 font-medium text-neu-text",
+            "active:shadow-neu-pressed transition-all duration-200",
+            "hover:brightness-105",
+            className
+        )}
+        {...props}
+    />
+));
+NeuButton.displayName = "NeuButton";
 
-export const NeuIconButton: React.FC<NeuProps> = ({ children, className = '', onClick, active }) => {
-  return (
+// Neumorphic Icon Button Component
+export const NeuIconButton = React.forwardRef<
+    HTMLButtonElement,
+    React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
     <button
-      onClick={onClick}
-      className={`
-        w-12 h-12 rounded-full flex items-center justify-center outline-none
-        transition-all duration-200 ease-in-out
-        ${active ? 'shadow-neu-pressed text-neu-accent' : 'shadow-neu-flat bg-neu-base text-neu-text'}
-        active:shadow-neu-pressed
-        ${className}
-      `}
-    >
-      {children}
-    </button>
-  );
-};
+        ref={ref}
+        className={cn(
+            "bg-neu-base rounded-full shadow-neu-flat p-3",
+            "active:shadow-neu-pressed transition-all duration-200",
+            "flex items-center justify-center",
+            className
+        )}
+        {...props}
+    />
+));
+NeuIconButton.displayName = "NeuIconButton";

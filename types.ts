@@ -60,11 +60,11 @@ export interface ChartDataPoint {
 
 export interface ChartStats {
   totalMinutes: number;
-  trendPercentage: number;
+  totalSessions: number;
   data: ChartDataPoint[];
 }
 
-export type ChartRange = 'weekly' | 'monthly' | 'yearly';
+export type ChartRange = 'daily' | 'weekly' | 'monthly';
 
 export interface Reminder {
   id: string;
