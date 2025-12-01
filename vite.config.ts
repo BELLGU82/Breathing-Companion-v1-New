@@ -45,6 +45,7 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3}'],
+          maximumFileSizeToCacheInBytes: 20 * 1024 * 1024, // allow precaching larger audio like calm_music.mp3
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
