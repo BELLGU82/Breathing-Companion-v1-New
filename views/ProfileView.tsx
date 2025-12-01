@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Ghost, Bell, Moon, Volume2, Shield, Check, VolumeX, Vibrate, Trash2, Plus, Pencil, Lock } from 'lucide-react';
 import { NeuCard } from '../components/Neu';
-import { ActivityChartCard, ChartRange } from '../components/ui/activity-chart-card';
+// import { ActivityChartCard, ChartRange } from '../components/ui/activity-chart-card'; // Moved to Home
 import { StorageService } from '../services/StorageService';
 import { AudioService } from '../services/AudioService';
 import { HapticService } from '../services/HapticService';
 import { NotificationService } from '../services/NotificationService';
-import { ChartStats, Reminder } from '../types';
+import { ChartStats, Reminder, ChartRange } from '../types';
 
 // Neumorphic Toggle Component
 const NeuToggle = ({ value, onToggle }: { value: boolean, onToggle: (e: React.MouseEvent) => void }) => {
@@ -139,9 +139,9 @@ export const ProfileView: React.FC = () => {
     const newState = !isRegistered;
     StorageService.setRegistered(newState);
     setIsRegistered(newState);
-    if (newState) {
-      loadStats(selectedRange);
-    }
+    // if (newState) {
+    //   loadStats(selectedRange);
+    // }
   };
 
   const handleHapticsToggle = (e: React.MouseEvent) => {
@@ -235,7 +235,7 @@ export const ProfileView: React.FC = () => {
         onClick={handleToggleRegistration}
       >
         <div className={`w-16 h-16 rounded-full shadow-neu-pressed flex items-center justify-center ${isRegistered ? 'bg-blue-100 text-blue-500' : 'bg-neu-base text-neu-dark'}`}>
-          <Ghost size={32} strokeWidth={1} />
+          <Ghost size={22} strokeWidth={1} />
         </div>
         <div className="flex-1">
           <h2 className="font-bold text-lg text-neu-text flex items-center gap-2">
@@ -255,8 +255,8 @@ export const ProfileView: React.FC = () => {
         )}
       </NeuCard>
 
-      {/* Stats Section with New Component */}
-      {isRegistered && (
+      {/* Stats Section - MOVED TO HOME */}
+      {/* {isRegistered && (
         <div className="animate-in fade-in duration-500">
           <ActivityChartCard
             title="פעילות"
@@ -268,7 +268,7 @@ export const ProfileView: React.FC = () => {
             className="w-full bg-neu-base shadow-neu-flat border-none"
           />
         </div>
-      )}
+      )} */}
 
       {/* Settings List */}
       <div>
@@ -278,7 +278,7 @@ export const ProfileView: React.FC = () => {
           {isRegistered ? (
             <SettingItem
               icon={Bell}
-              label="תזכורות יומיות"
+              label="תזכורות"
               toggle={handleNotificationsToggle}
               value={notificationsEnabled}
             >
@@ -306,13 +306,13 @@ export const ProfileView: React.FC = () => {
                           onClick={() => handleEditReminder(reminder)}
                           className="p-2 text-gray-400 hover:text-neu-accent transition-colors"
                         >
-                          <Pencil size={18} />
+                          <Pencil size={12} />
                         </button>
                         <button
                           onClick={() => handleDeleteReminder(reminder.id)}
                           className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={12} />
                         </button>
                       </div>
                     </div>
@@ -467,7 +467,6 @@ export const ProfileView: React.FC = () => {
 
       {/* Support */}
       <div>
-        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 mr-2">אודות</h3>
         <NeuCard>
           <SettingItem icon={Shield} label="מדיניות פרטיות" />
           <div className="py-4 text-center text-xs text-gray-400">

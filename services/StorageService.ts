@@ -1,4 +1,4 @@
-import { Session, SessionStats, ChartStats, ChartDataPoint, BreathingPattern, Reminder } from '../types';
+import { Session, SessionStats, ChartStats, ChartDataPoint, BreathingPattern, Reminder, ChartRange } from '../types';
 
 const STORAGE_KEY_SESSIONS = 'neshima_sessions';
 const STORAGE_KEY_USER_TYPE = 'neshima_is_registered';
@@ -154,6 +154,15 @@ export const StorageService = {
     localStorage.setItem(STORAGE_KEY_CUSTOM_PATTERNS, JSON.stringify(patterns));
   },
 
+  updateCustomPattern: (updatedPattern: BreathingPattern) => {
+    const patterns = StorageService.getCustomPatterns();
+    const index = patterns.findIndex(p => p.id === updatedPattern.id);
+    if (index !== -1) {
+      patterns[index] = updatedPattern;
+      localStorage.setItem(STORAGE_KEY_CUSTOM_PATTERNS, JSON.stringify(patterns));
+    }
+  },
+
   deleteCustomPattern: (id: string) => {
     const patterns = StorageService.getCustomPatterns();
     const newPatterns = patterns.filter(p => p.id !== id);
@@ -231,6 +240,27 @@ export const StorageService = {
     return null;
   },
 
+  clearLastInterruptedSession: () => {
+    const sessions = StorageService.getSessions();
+    if (sessions.length === 0) return;
+
+    // Filter out the last interrupted session
+    // We need to find it first to make sure we only remove the specific one we are showing
+    let found = false;
+    const newSessions: Session[] = [];
+
+    // Iterate backwards to find the *last* interrupted one
+    for (let i = sessions.length - 1; i >= 0; i--) {
+      if (!found && !sessions[i].isCompleted) {
+        found = true; // Skip this one (delete it)
+      } else {
+        newSessions.unshift(sessions[i]); // Keep others
+      }
+    }
+
+    localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(newSessions));
+  },
+
   // Stats Logic
   getStats: (): SessionStats => {
     const sessions = StorageService.getSessions();
@@ -295,7 +325,7 @@ export const StorageService = {
     };
   },
 
-  getChartStats: (range: 'weekly' | 'monthly' | 'yearly'): ChartStats => {
+  getChartStats: (range: ChartRange): ChartStats => {
     const sessions = StorageService.getSessions().filter(s => s.isCompleted);
     const now = new Date();
 

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Sliders, X, Plus, Trash2, Play, Heart, Check, List, Lock } from 'lucide-react';
 import { CATEGORIES } from '../constants';
 import { NeuCard, NeuButton, NeuIconButton } from '../components/Neu';
@@ -19,7 +19,9 @@ export const BreatheView: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showLoginGate, setShowLoginGate] = useState(false);
+  const location = useLocation();
   const [lastSavedPatternId, setLastSavedPatternId] = useState<string | null>(null);
+  const [editingPatternId, setEditingPatternId] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -37,6 +39,28 @@ export const BreatheView: React.FC = () => {
       setShowLoginGate(false);
     }
   }, [isModalOpen]); // Refresh when modal opens/closes
+
+  useEffect(() => {
+    // Check for edit mode
+    if (location.state && location.state.editPatternId) {
+      const patternId = location.state.editPatternId;
+      const pattern = StorageService.getCustomPattern(patternId);
+      if (pattern) {
+        setEditingPatternId(patternId);
+        setFormData({
+          name: pattern.name,
+          inhale: pattern.phases.inhale,
+          holdIn: pattern.phases.holdIn,
+          exhale: pattern.phases.exhale,
+          holdOut: pattern.phases.holdOut,
+          reps: pattern.reps || 10
+        });
+        setIsModalOpen(true);
+      }
+      // Clear state so we don't re-open on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const getIconClass = (id: string) => {
     switch (id) {
@@ -88,6 +112,8 @@ export const BreatheView: React.FC = () => {
       id: newPatternId,
       name: formData.name,
       description: 'תרגול מותאם אישית',
+      instruction: 'שאיפה ונשיפה בהתאם לקצב שקבעת.',
+      benefits: 'תרגול מותאם אישית.',
       recommendedDuration: totalDuration,
       reps: Number(formData.reps), // Explicitly save reps
       phases: {
@@ -98,10 +124,22 @@ export const BreatheView: React.FC = () => {
       }
     };
 
-    StorageService.saveCustomPattern(newPattern);
+    if (editingPatternId) {
+      // Update existing
+      const updatedPattern: BreathingPattern = {
+        ...newPattern,
+        id: editingPatternId
+      };
+      StorageService.updateCustomPattern(updatedPattern);
+      setLastSavedPatternId(editingPatternId);
+    } else {
+      // Create new
+      StorageService.saveCustomPattern(newPattern);
+      setLastSavedPatternId(newPatternId);
+    }
 
     // Show success screen
-    setLastSavedPatternId(newPatternId);
+    // setLastSavedPatternId is handled above
 
     // Reset form
     setFormData({
@@ -117,6 +155,15 @@ export const BreatheView: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setLastSavedPatternId(null);
+    setEditingPatternId(null);
+    setFormData({
+      name: '',
+      inhale: 4,
+      holdIn: 4,
+      exhale: 4,
+      holdOut: 4,
+      reps: 10
+    });
   };
 
   return (
@@ -367,7 +414,7 @@ export const BreatheView: React.FC = () => {
 
                   <div className="flex flex-row gap-4 w-full pt-4">
                     <NeuButton
-                      onClick={handleCloseModal}
+                      onClick={() => navigate('/category/custom')}
                       className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto"
                       variant="secondary"
                     >

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Volume, Volume1, Volume2, VolumeX, SkipForward, ArrowRight, X, Heart, Mic } from 'lucide-react';
+import { Volume, Volume1, Volume2, VolumeX, SkipForward, ArrowLeft, X, Heart, Mic, MicOff, Home } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BREATHING_PATTERNS, PHASE_LABELS, CATEGORIES } from '../constants';
 import { BreathingPhase } from '../types';
@@ -128,6 +128,15 @@ export const SessionView: React.FC = () => {
       case BreathingPhase.Rest: return pattern.restDuration || 0;
       default: return 0;
     }
+  }, [pattern]);
+
+  const getRhythmString = useMemo(() => {
+    const parts = [];
+    if (pattern.phases.inhale) parts.push(`שאיפה ${pattern.phases.inhale}`);
+    if (pattern.phases.holdIn) parts.push(`החזקה ${pattern.phases.holdIn}`);
+    if (pattern.phases.exhale) parts.push(`נשיפה ${pattern.phases.exhale}`);
+    if (pattern.phases.holdOut) parts.push(`החזקה ${pattern.phases.holdOut}`);
+    return `קצב נשימה: ${parts.join(' · ')}`;
   }, [pattern]);
 
   const getNextPhase = useCallback((current: BreathingPhase) => {
@@ -448,19 +457,24 @@ export const SessionView: React.FC = () => {
           </div>
         )}
 
-        <div className="flex flex-col gap-4 w-full max-w-xs">
-          {nextExercise ? (
-            <>
-              <NeuButton onClick={handleNextExercise} className="w-full !bg-neu-accent !text-white shadow-lg">
-                המשך לתרגיל הבא
-              </NeuButton>
-              <NeuButton onClick={() => navigate('/')} className="w-full text-gray-500">
-                חזרה הביתה
-              </NeuButton>
-            </>
-          ) : (
-            <NeuButton onClick={() => navigate('/')} className="w-full !bg-neu-accent !text-white shadow-lg">
-              חזרה הביתה
+        <div className="flex flex-row gap-6 w-full max-w-xs justify-center items-center">
+          {/* Home Button */}
+          <NeuButton
+            onClick={() => navigate('/')}
+            className="!w-16 !h-16 !rounded-2xl !p-0 flex items-center justify-center bg-neu-base text-neu-text shadow-neu-flat active:shadow-neu-pressed transition-all"
+            aria-label="חזרה הביתה"
+          >
+            <Home size={24} strokeWidth={1.5} />
+          </NeuButton>
+
+          {/* Next Exercise Button (if exists) */}
+          {nextExercise && (
+            <NeuButton
+              onClick={handleNextExercise}
+              className="!w-16 !h-16 !rounded-2xl !p-0 flex items-center justify-center bg-neu-base text-neu-text shadow-neu-flat active:shadow-neu-pressed transition-all"
+              aria-label="התרגיל הבא"
+            >
+              <ArrowLeft size={28} strokeWidth={1.5} />
             </NeuButton>
           )}
         </div>
@@ -508,8 +522,10 @@ export const SessionView: React.FC = () => {
       </div>
 
       {/* Top Info */}
-      <div className="pt-10 pb-4 flex flex-col justify-center items-center z-10 space-y-1 px-6 text-center mt-4">
-        <h1 className="text-neu-text font-bold text-lg">{pattern.name}</h1>
+      <div className="pt-10 pb-4 flex flex-col justify-center items-center z-10 space-y-2 px-6 text-center mt-4">
+        <h1 className="text-neu-text font-bold text-xl">{pattern.name}</h1>
+        <p className="text-sm text-neu-text/70 font-medium">מטרת התרגיל: {pattern.benefits}</p>
+        <p className="text-xs text-neu-text/50 font-mono" dir="ltr">{getRhythmString}</p>
       </div>
 
       {/* Breathing Circle Area */}
@@ -592,17 +608,17 @@ export const SessionView: React.FC = () => {
       </div>
 
       {/* Bottom Controls */}
-      <div className="pb-12 px-8 flex flex-col items-center z-10 w-full max-w-xs mx-auto space-y-4">
+      <div className="pb-12 px-8 flex flex-row items-center justify-center z-10 w-full max-w-md mx-auto gap-4">
 
         {/* Music Volume Slider */}
-        <div className="w-full flex items-center gap-4 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
+        <div className="flex-1 flex items-center gap-3 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
           <div
             onClick={() => {
               const newMuted = !AudioService.isMuted();
               AudioService.setMuted(newMuted);
               setMusicVolume(newMuted ? 0 : StorageService.getMusicVolume());
             }}
-            className="cursor-pointer text-neu-text/70 hover:text-neu-text transition-colors"
+            className="cursor-pointer text-neu-text/70 hover:text-neu-text transition-colors shrink-0"
           >
             {getVolumeIcon()}
           </div>
@@ -617,14 +633,21 @@ export const SessionView: React.FC = () => {
               setMusicVolume(newVol);
               AudioService.setBackgroundVolume(newVol);
             }}
-            className="flex-1 h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
+            className="w-full h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
           />
         </div>
 
         {/* Voice Volume Slider (NEW) */}
-        <div className="w-full flex items-center gap-4 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
-          <div className="text-neu-text/70">
-            <Mic size={20} strokeWidth={1} />
+        <div className="flex-1 flex items-center gap-3 bg-neu-base/50 p-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-sm">
+          <div
+            onClick={() => {
+              const newVol = voiceVolume > 0 ? 0 : 80; // Toggle between 0 and 80 (default-ish)
+              setVoiceVolume(newVol);
+              AudioService.setVoiceVolume(newVol);
+            }}
+            className="cursor-pointer text-neu-text/70 hover:text-neu-text transition-colors shrink-0"
+          >
+            {voiceVolume === 0 ? <MicOff size={20} strokeWidth={1} /> : <Mic size={20} strokeWidth={1} />}
           </div>
 
           <input
@@ -637,7 +660,7 @@ export const SessionView: React.FC = () => {
               setVoiceVolume(newVol);
               AudioService.setVoiceVolume(newVol);
             }}
-            className="flex-1 h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
+            className="w-full h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
           />
         </div>
 

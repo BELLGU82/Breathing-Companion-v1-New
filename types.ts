@@ -14,6 +14,8 @@ export interface BreathingPattern {
   id: string;
   name: string;
   description: string;
+  instruction: string;
+  benefits: string;
   recommendedDuration?: number; // Recommended session length in seconds
   reps?: number; // Optional: Specific number of repetitions (overrides duration)
   restDuration?: number; // Optional rest between cycles
@@ -61,6 +63,8 @@ export interface ChartStats {
   trendPercentage: number;
   data: ChartDataPoint[];
 }
+
+export type ChartRange = 'weekly' | 'monthly' | 'yearly';
 
 export interface Reminder {
   id: string;

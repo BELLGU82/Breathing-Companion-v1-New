@@ -23,7 +23,7 @@ interface ActivityDataPoint {
   value: number; // minutes
 }
 
-export type ChartRange = 'weekly' | 'monthly' | 'yearly';
+import { ChartRange } from "../../types";
 
 interface ActivityChartCardProps {
   title?: string;
@@ -36,9 +36,9 @@ interface ActivityChartCardProps {
 }
 
 const RANGE_LABELS: Record<ChartRange, string> = {
-    weekly: "שבועי",
-    monthly: "חודשי",
-    yearly: "שנתי"
+  weekly: "שבועי",
+  monthly: "חודשי",
+  yearly: "שנתי"
 };
 
 export const ActivityChartCard = ({
@@ -81,7 +81,7 @@ export const ActivityChartCard = ({
   return (
     <Card
       className={cn(
-        "w-full max-w-md border-none bg-neu-base shadow-[8px_8px_16px_#d1d1d1,-8px_-8px_16px_#ffffff] rounded-2xl", 
+        "w-full max-w-md border-none bg-neu-base shadow-[8px_8px_16px_#d1d1d1,-8px_-8px_16px_#ffffff] rounded-2xl",
         className
       )}
       aria-labelledby="activity-card-title"
@@ -125,16 +125,16 @@ export const ActivityChartCard = ({
               {trendPercentage > 0 && <TrendingUp className="h-4 w-4 text-emerald-500" />}
               {trendPercentage < 0 && <TrendingDown className="h-4 w-4 text-red-500" />}
               {trendPercentage === 0 && <Minus className="h-4 w-4 text-gray-400" />}
-              
+
               <span className={cn(
-                  "font-medium",
-                  trendPercentage > 0 ? "text-emerald-500" : 
+                "font-medium",
+                trendPercentage > 0 ? "text-emerald-500" :
                   trendPercentage < 0 ? "text-red-500" : "text-gray-400"
               )}>
                 {Math.abs(trendPercentage)}%
               </span>
               <span className="text-gray-400">
-                 {selectedRange === 'weekly' ? 'משבוע שעבר' : 
+                {selectedRange === 'weekly' ? 'משבוע שעבר' :
                   selectedRange === 'monthly' ? 'מחודש שעבר' : 'משנה שעברה'}
               </span>
             </CardDescription>
@@ -149,31 +149,31 @@ export const ActivityChartCard = ({
             aria-label="Activity chart"
           >
             {data.map((item, index) => {
-                const heightPercent = (item.value / maxValue) * 100;
-                
-                return (
-                  <div
-                    key={index}
-                    className="flex h-full w-full flex-col items-center justify-end gap-2 group"
-                    role="presentation"
-                  >
-                    <span className="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity absolute -translate-y-6 bg-white/50 px-1 rounded pointer-events-none">
-                        {item.value}
-                    </span>
-                    
-                    <motion.div
-                      className="w-full max-w-[24px] rounded-md bg-[#4a5568] hover:opacity-80 transition-opacity relative"
-                      style={{
-                        height: `${Math.max(4, heightPercent)}%`,
-                      }}
-                      variants={barVariants}
-                      aria-label={`${item.label}: ${item.value} דקות`}
-                    />
-                    <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis max-w-[30px] text-center">
-                      {item.label}
-                    </span>
-                  </div>
-                );
+              const heightPercent = (item.value / maxValue) * 100;
+
+              return (
+                <div
+                  key={index}
+                  className="flex h-full w-full flex-col items-center justify-end gap-2 group"
+                  role="presentation"
+                >
+                  <span className="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity absolute -translate-y-6 bg-white/50 px-1 rounded pointer-events-none">
+                    {item.value}
+                  </span>
+
+                  <motion.div
+                    className="w-full max-w-[24px] rounded-md bg-[#4a5568] hover:opacity-80 transition-opacity relative"
+                    style={{
+                      height: `${Math.max(4, heightPercent)}%`,
+                    }}
+                    variants={barVariants}
+                    aria-label={`${item.label}: ${item.value} דקות`}
+                  />
+                  <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis max-w-[30px] text-center">
+                    {item.label}
+                  </span>
+                </div>
+              );
             })}
           </motion.div>
         </div>
