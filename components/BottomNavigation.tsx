@@ -26,7 +26,7 @@ export const BottomNavigation: React.FC = () => {
         onMouseLeave={() => setHovered(false)}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
-        className="relative flex items-center justify-center w-full h-full outline-none group"
+        className="relative flex items-center justify-center w-full h-full outline-none group hover-soft"
         aria-label={label}
       >
         {/* Active Indicator - Circular Background */}
@@ -47,7 +47,7 @@ export const BottomNavigation: React.FC = () => {
               initial={{ opacity: 0, y: 10, x: '-50%' }}
               animate={{ opacity: 1, y: -7, x: '-50%' }}
               exit={{ opacity: 0, y: 10, x: '-50%' }}
-              className="absolute left-1/2 top-0 bg-neu-base shadow-neu-flat border border-white/40 px-3 py-1 rounded-lg text-[10px] font-bold text-neu-text whitespace-nowrap z-50 pointer-events-none"
+              className="absolute left-1/2 top-0 bg-neu-base shadow-neu-flat border border-white/40 px-3 py-1 rounded-lg text-meta whitespace-nowrap z-50 pointer-events-none"
             >
               {label}
             </motion.div>
@@ -58,12 +58,11 @@ export const BottomNavigation: React.FC = () => {
         <motion.div
           className="z-10 relative"
           animate={{
-            scale: isHovered ? 1.2 : 1,
-            color: isActive ? '#4a5568' : '#9CA3AF'
+            scale: isHovered ? 1.2 : 1
           }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          <Icon size={26} strokeWidth={isActive ? 1.2 : 1} />
+          <Icon className="icon-primary" strokeWidth={isActive ? 1.2 : 1} />
         </motion.div>
       </button>
     );

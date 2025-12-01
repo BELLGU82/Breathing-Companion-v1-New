@@ -31,8 +31,8 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="h-screen w-screen bg-neu-base text-neu-text overflow-hidden font-sans relative">
-        <div className="h-full w-full max-w-md mx-auto bg-neu-base relative shadow-2xl overflow-hidden sm:border-x border-gray-200/20">
+      <div className="h-screen w-screen bg-neu-base overflow-hidden font-sans relative">
+        <div className="h-full w-full max-w-md mx-auto bg-neu-base relative shadow-2xl overflow-hidden sm:border-x border-white/20">
           <Routes>
             <Route path="/" element={<HomeView />} />
             <Route path="/breathe" element={<BreatheView />} />

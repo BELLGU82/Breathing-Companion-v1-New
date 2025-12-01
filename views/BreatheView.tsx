@@ -72,16 +72,6 @@ export const BreatheView: React.FC = () => {
     }
   };
 
-  const getHoverClass = (id: string) => {
-    switch (id) {
-      case 'morning': return 'hover:bg-amber-50 dark:hover:bg-amber-900/20';
-      case 'focus': return 'hover:bg-blue-50 dark:hover:bg-blue-900/20';
-      case 'regulate': return 'hover:bg-teal-50 dark:hover:bg-teal-900/20';
-      case 'sleep': return 'hover:bg-indigo-50 dark:hover:bg-indigo-900/20';
-      default: return 'hover:bg-gray-50 dark:hover:bg-gray-800/50';
-    }
-  };
-
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
@@ -169,8 +159,8 @@ export const BreatheView: React.FC = () => {
   return (
     <div className="flex flex-col h-full p-6 space-y-6 overflow-y-auto pb-24 relative">
       <header className="mt-2">
-        <h1 className="text-2xl font-bold text-neu-text">לנשום</h1>
-        <p className="text-sm text-gray-500">בחר את סוג התרגול המתאים לך כרגע</p>
+        <h1 className="text-h1">לנשום</h1>
+        <p className="text-meta">בחר את סוג התרגול המתאים לך כרגע</p>
       </header>
 
       {/* Categories List */}
@@ -184,22 +174,21 @@ export const BreatheView: React.FC = () => {
               rounded-2xl bg-neu-base shadow-neu-flat cursor-pointer
               transition-all duration-300 ease-out
               active:scale-98 active:shadow-neu-pressed
-              hover-animate group
-              ${getHoverClass(category.id)}
+              hover-animate group hover-soft
             `}
             onClick={() => navigate(`/category/${category.id}`)}
           >
             {/* Icon on the Right (First in RTL flow) */}
             <div className={`ml-6 transition-transform duration-300 flex-shrink-0 ${getIconClass(category.id)}`}>
-              <category.icon size={32} strokeWidth={1} className="text-neu-text" />
+              <category.icon strokeWidth={1} className="icon-primary" />
             </div>
 
             {/* Text Content */}
             <div className="flex flex-col items-start justify-center">
-              <span className="text-neu-text font-bold text-xl leading-none mb-1">
+              <span className="text-h1 leading-none mb-1">
                 {category.name}
               </span>
-              <span className="text-xs text-gray-500 font-medium leading-tight">
+              <span className="text-body leading-tight">
                 {category.description}
               </span>
             </div>
@@ -214,24 +203,24 @@ export const BreatheView: React.FC = () => {
             rounded-2xl bg-neu-base shadow-neu-flat cursor-pointer
             transition-all duration-300 ease-out
             active:scale-98 active:shadow-neu-pressed
-            hover:bg-gray-50 dark:hover:bg-gray-800/50 group
+            group hover-soft
           `}
           onClick={handleCustomClick}
         >
           <div className="ml-6 transition-transform duration-300 flex-shrink-0 relative">
-            <Sliders size={32} strokeWidth={1} className="text-neu-text" />
+            <Sliders strokeWidth={1} className="icon-primary" />
             {!StorageService.isRegistered() && (
               <div className="absolute -top-1 -right-1 bg-neu-base rounded-full p-1 shadow-neu-flat">
-                <Lock size={12} className="text-gray-400" />
+                <Lock className="icon-secondary" />
               </div>
             )}
           </div>
           <div className="flex flex-col items-start justify-center">
-            <span className="text-neu-text font-bold text-xl leading-none mb-1 flex items-center gap-2">
+            <span className="text-h1 leading-none mb-1 flex items-center gap-2">
               להתאים לבד
-              {!StorageService.isRegistered() && <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">נעול</span>}
+              {!StorageService.isRegistered() && <span className="text-meta px-2 py-0.5 rounded-full">נעול</span>}
             </span>
-            <span className="text-xs text-gray-500 font-medium leading-tight">
+            <span className="text-body leading-tight">
               צור תרגיל אישי חדש
             </span>
           </div>
@@ -257,14 +246,14 @@ export const BreatheView: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col items-center text-center space-y-6">
-                <div className="w-20 h-20 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center text-neu-text relative">
+                <div className="w-20 h-20 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center relative">
                   <div className="absolute inset-0 bg-neu-convex rounded-full opacity-50"></div>
-                  <Lock size={32} strokeWidth={1} color="#4a5568" className="relative z-10" />
+                  <Lock strokeWidth={1} className="icon-primary relative z-10" />
                 </div>
 
                 <div className="space-y-2">
-                  <h2 className="text-xl font-bold text-neu-text">צריך להתחבר</h2>
-                  <p className="text-gray-500 text-sm leading-relaxed px-2">
+                  <h2 className="text-h1">צריך להתחבר</h2>
+                  <p className="text-body leading-relaxed px-2">
                     כדי ליצור תרגילים אישיים, נדרשת התחברות לחשבון.
                   </p>
                 </div>
@@ -272,13 +261,13 @@ export const BreatheView: React.FC = () => {
                 <div className="flex flex-col w-full gap-3 pt-2">
                   <NeuButton
                     onClick={() => navigate('/profile')}
-                    className="w-full !bg-neu-accent !text-white shadow-lg h-12"
+                    className="w-full shadow-lg h-12"
                   >
                     להתחברות
                   </NeuButton>
                   <NeuButton
                     onClick={() => setShowLoginGate(false)}
-                    className="w-full text-gray-500 h-12"
+                    className="w-full text-meta h-12"
                   >
                     אולי אחר כך
                   </NeuButton>
@@ -301,15 +290,15 @@ export const BreatheView: React.FC = () => {
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 shrink-0 z-10 bg-neu-base">
-              <h2 className="text-xl font-bold text-neu-text flex items-center gap-3">
+              <h2 className="text-h1 flex items-center gap-3">
                 <InsetIconWrapper>
-                  <Sliders size={18} strokeWidth={1} color="#4a5568" />
+                  <Sliders strokeWidth={1} className="icon-primary" />
                 </InsetIconWrapper>
                 תרגול מותאם אישית
               </h2>
               <NeuIconButton onClick={handleCloseModal} className="w-10 h-10">
                 <InsetIconWrapper>
-                  <X size={18} strokeWidth={1} color="#4a5568" />
+                  <X strokeWidth={1} className="icon-secondary" />
                 </InsetIconWrapper>
               </NeuIconButton>
             </div>
@@ -319,69 +308,69 @@ export const BreatheView: React.FC = () => {
                 // FORM VIEW
                 <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
                   <div className="space-y-3">
-                    <label className="text-sm font-bold text-gray-500 mr-1 block">שם התרגיל</label>
+                    <label className="text-body mr-1 block">שם התרגיל</label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       placeholder="לדוגמה: נשימת לילה"
-                      className="w-full bg-neu-base shadow-[inset_3px_3px_6px_var(--neu-shadow-inset-dark),inset_-3px_-3px_6px_var(--neu-shadow-inset-light)] rounded-xl p-4 outline-none text-neu-text text-lg focus:ring-2 focus:ring-neu-accent/20 transition-all text-center placeholder-gray-400"
+                      className="w-full bg-neu-base shadow-[inset_3px_3px_6px_var(--neu-shadow-inset-dark),inset_-3px_-3px_6px_var(--neu-shadow-inset-light)] rounded-xl p-4 outline-none text-h2 transition-all text-center"
                       autoFocus
                     />
                   </div>
 
                   {/* Horizontal Timing Row */}
                   <div className="space-y-3">
-                    <label className="text-sm font-bold text-gray-500 mr-1 block text-center">זמני מחזור (שניות)</label>
+                    <label className="text-body mr-1 block text-center">זמני מחזור (שניות)</label>
                     <div className="flex items-center justify-between gap-3 bg-neu-base shadow-neu-flat rounded-2xl p-4">
                       <div className="flex flex-col items-center gap-2 flex-1">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">שאיפה</span>
+                        <span className="text-[10px] text-meta uppercase">שאיפה</span>
                         <input
                           type="number" min="1" max="60"
                           value={formData.inhale}
                           onChange={(e) => handleInputChange('inhale', e.target.value)}
-                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-neu-text text-center font-mono font-bold text-lg p-0 flex items-center justify-center"
+                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-h2 text-center font-mono p-0 flex items-center justify-center"
                         />
                       </div>
                       <div className="flex flex-col items-center gap-2 flex-1">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">החזקה</span>
+                        <span className="text-[10px] text-meta uppercase">החזקה</span>
                         <input
                           type="number" min="0" max="60"
                           value={formData.holdIn}
                           onChange={(e) => handleInputChange('holdIn', e.target.value)}
-                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-neu-text text-center font-mono font-bold text-lg p-0 flex items-center justify-center"
+                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-h2 text-center font-mono p-0 flex items-center justify-center"
                         />
                       </div>
                       <div className="flex flex-col items-center gap-2 flex-1">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">נשיפה</span>
+                        <span className="text-[10px] text-meta uppercase">נשיפה</span>
                         <input
                           type="number" min="1" max="60"
                           value={formData.exhale}
                           onChange={(e) => handleInputChange('exhale', e.target.value)}
-                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-neu-text text-center font-mono font-bold text-lg p-0 flex items-center justify-center"
+                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-h2 text-center font-mono p-0 flex items-center justify-center"
                         />
                       </div>
                       <div className="flex flex-col items-center gap-2 flex-1">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">החזקה</span>
+                        <span className="text-[10px] text-meta uppercase">החזקה</span>
                         <input
                           type="number" min="0" max="60"
                           value={formData.holdOut}
                           onChange={(e) => handleInputChange('holdOut', e.target.value)}
-                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-neu-text text-center font-mono font-bold text-lg p-0 flex items-center justify-center"
+                          className="w-full aspect-square bg-neu-base shadow-[inset_2px_2px_4px_var(--neu-shadow-inset-dark),inset_-2px_-2px_4px_var(--neu-shadow-inset-light)] rounded-xl outline-none text-h2 text-center font-mono p-0 flex items-center justify-center"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3 pt-2">
-                    <label className="text-sm font-bold text-gray-500 mr-1 block text-center">מספר חזרות</label>
+                    <label className="text-body mr-1 block text-center">מספר חזרות</label>
                     <div className="flex justify-center">
                       <input
                         type="number"
                         min="1" max="100"
                         value={formData.reps}
                         onChange={(e) => handleInputChange('reps', e.target.value)}
-                        className="w-24 bg-neu-base shadow-[inset_3px_3px_6px_var(--neu-shadow-inset-dark),inset_-3px_-3px_6px_var(--neu-shadow-inset-light)] rounded-xl p-3 outline-none text-neu-text text-center font-mono text-xl font-bold"
+                        className="w-24 bg-neu-base shadow-[inset_3px_3px_6px_var(--neu-shadow-inset-dark),inset_-3px_-3px_6px_var(--neu-shadow-inset-light)] rounded-xl p-3 outline-none text-h2 text-center font-mono"
                       />
                     </div>
                   </div>
@@ -393,22 +382,22 @@ export const BreatheView: React.FC = () => {
                       disabled={!formData.name}
                     >
                       <InsetIconWrapper>
-                        <Plus size={18} strokeWidth={1} color="#4a5568" />
+                        <Plus strokeWidth={1} className="icon-secondary" />
                       </InsetIconWrapper>
-                      <span className="text-neu-text font-bold text-lg">שמור תרגיל</span>
+                      <span className="text-h2">שמור תרגיל</span>
                     </NeuButton>
                   </div>
                 </div>
               ) : (
                 // SUCCESS VIEW
                 <div className="flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in zoom-in-95 duration-300">
-                  <div className="w-24 h-24 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center text-emerald-500">
-                    <Check size={48} strokeWidth={2} />
+                  <div className="w-24 h-24 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center">
+                    <Check strokeWidth={2} className="icon-primary" />
                   </div>
 
                   <div className="space-y-2">
-                    <h2 className="text-3xl font-bold text-neu-text">התרגיל נשמר!</h2>
-                    <p className="text-gray-500">התרגיל האישי שלך מוכן לשימוש.</p>
+                    <h2 className="text-h1">התרגיל נשמר!</h2>
+                    <p className="text-body">התרגיל האישי שלך מוכן לשימוש.</p>
                   </div>
 
                   <div className="flex flex-row gap-4 w-full pt-4">
@@ -416,16 +405,16 @@ export const BreatheView: React.FC = () => {
                       onClick={() => navigate('/category/custom')}
                       className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto"
                     >
-                      <List size={24} strokeWidth={1} />
-                      <span className="text-sm font-bold">לרשימת תרגילים</span>
+                      <List strokeWidth={1} className="icon-secondary" />
+                      <span className="text-body">לרשימת תרגילים</span>
                     </NeuButton>
 
                     <NeuButton
                       onClick={() => navigate(`/session/${lastSavedPatternId}`)}
-                      className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto !bg-neu-base !text-neu-accent shadow-neu-pressed"
+                      className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto shadow-neu-pressed"
                     >
-                      <Play size={24} strokeWidth={1} fill="currentColor" />
-                      <span className="text-sm font-bold">לנסות עכשיו</span>
+                      <Play strokeWidth={1} fill="currentColor" className="icon-secondary" />
+                      <span className="text-body">לנסות עכשיו</span>
                     </NeuButton>
                   </div>
                 </div>

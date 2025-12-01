@@ -29,7 +29,7 @@ const NeuToggle = ({ value, onToggle }: { value: boolean, onToggle: (e: React.Mo
       <div
         className={`
           absolute top-1 bottom-1 w-5 h-5 rounded-full shadow-[2px_2px_5px_#a3b1c6,-2px_-2px_5px_#ffffff] transition-all duration-300 ease-out flex items-center justify-center
-          ${value ? 'bg-neu-accent left-[calc(100%-1.5rem)]' : 'bg-neu-base left-1'}
+          ${value ? 'bg-neu-dark left-[calc(100%-1.5rem)]' : 'bg-neu-base left-1'}
         `}
       >
         {value && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />}
@@ -203,11 +203,11 @@ export const ProfileView: React.FC = () => {
   };
 
   const SettingItem = ({ icon: Icon, label, toggle, value, children }: any) => (
-    <div className="flex flex-col py-4 border-b border-gray-200/50 last:border-0">
+    <div className="flex flex-col py-4 border-b border-white/20 last:border-0">
       <div className="flex items-center justify-between cursor-pointer" onClick={(e) => toggle && toggle(e)}>
         <div className="flex items-center gap-4">
-          <div className="text-neu-text"><Icon size={20} strokeWidth={1} className="text-neu-text" /></div>
-          <span className="text-neu-text font-medium">{label}</span>
+          <div><Icon strokeWidth={1} className="icon-secondary" /></div>
+          <span className="text-body">{label}</span>
         </div>
         {toggle && (
           <div onClick={(e) => e.stopPropagation()}>
@@ -226,31 +226,31 @@ export const ProfileView: React.FC = () => {
   return (
     <div className="flex flex-col h-full p-6 space-y-6 overflow-y-auto pb-32">
       <div className="mt-2">
-        <h1 className="text-[22px] font-bold text-neu-text">פרופיל אישי</h1>
+        <h1 className="text-h1">פרופיל אישי</h1>
       </div>
 
       {/* User Login Card */}
       <NeuCard
-        className={`flex items-center gap-4 cursor-pointer active:scale-95 transition-transform ${!isRegistered ? 'border-2 border-neu-accent/20' : ''}`}
+        className="flex items-center gap-4 cursor-pointer active:scale-95 transition-transform hover-soft"
         onClick={handleToggleRegistration}
       >
-        <div className={`w-16 h-16 rounded-full shadow-neu-pressed flex items-center justify-center ${isRegistered ? 'bg-blue-100 text-blue-500' : 'bg-neu-base text-neu-dark'}`}>
-          <Ghost size={22} strokeWidth={1} />
+        <div className="w-16 h-16 rounded-full shadow-neu-pressed flex items-center justify-center bg-neu-base">
+          <Ghost strokeWidth={1} className="icon-primary" />
         </div>
         <div className="flex-1">
-          <h2 className="font-bold text-[18px] text-neu-text flex items-center gap-2">
+          <h2 className="text-h2 flex items-center gap-2">
             {isRegistered ? 'משתמש רשום' : 'משתמש אורח'}
-            {!isRegistered && <span className="text-xs bg-neu-accent text-white px-2 py-0.5 rounded-full">מוגבל</span>}
+            {!isRegistered && <span className="text-meta px-2 py-0.5 rounded-full">מוגבל</span>}
           </h2>
-          <p className="text-[13px] text-neu-text-secondary">
+          <p className="text-meta">
             {isRegistered ? 'הנתונים שלך נשמרים' : 'לחץ כדי לפתוח את כל הפיצ\'רים'}
           </p>
         </div>
         {isRegistered ? (
-          <Check size={20} className="text-blue-500" strokeWidth={1} />
+          <Check className="icon-secondary" strokeWidth={1} />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-neu-accent flex items-center justify-center shadow-lg animate-pulse">
-            <Lock size={14} className="text-white" strokeWidth={1} />
+          <div className="w-8 h-8 rounded-full bg-neu-base flex items-center justify-center shadow-lg animate-pulse">
+            <Lock className="icon-secondary" strokeWidth={1} />
           </div>
         )}
       </NeuCard>
@@ -272,7 +272,7 @@ export const ProfileView: React.FC = () => {
 
       {/* Settings List */}
       <div>
-        <h3 className="text-[13px] font-bold text-neu-text-secondary uppercase tracking-wider mb-3 mr-2">הגדרות</h3>
+        <h3 className="text-meta uppercase tracking-wider mb-3 mr-2">הגדרות</h3>
         <NeuCard>
           {/* Reminders Section - Only for Registered Users */}
           {isRegistered ? (
@@ -282,16 +282,16 @@ export const ProfileView: React.FC = () => {
               toggle={handleNotificationsToggle}
               value={notificationsEnabled}
             >
-              {notificationsEnabled && (
-                <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+                  {notificationsEnabled && (
+                    <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
                   {/* Reminders List */}
                   {!isAddingReminder && reminders.map(reminder => (
                     <div key={reminder.id} className="flex items-center justify-between bg-white/50 p-3 rounded-xl border border-white/40">
                       <div className="flex flex-col">
-                        <span className="text-xl font-bold text-neu-text font-mono">{reminder.time}</span>
+                        <span className="text-h1 font-mono">{reminder.time}</span>
                         <div className="flex gap-1 mt-1">
                           {['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day, idx) => (
-                            <span key={idx} className={`text-[10px] w-4 h-4 flex items-center justify-center rounded-full ${reminder.days.includes(idx) ? 'bg-neu-accent text-white' : 'text-gray-400'}`}>
+                            <span key={idx} className={`text-[10px] w-4 h-4 flex items-center justify-center rounded-full ${reminder.days.includes(idx) ? 'shadow-neu-pressed' : 'text-meta'}`}>
                               {day}
                             </span>
                           ))}
@@ -304,15 +304,15 @@ export const ProfileView: React.FC = () => {
                         />
                         <button
                           onClick={() => handleEditReminder(reminder)}
-                          className="p-2 text-gray-400 hover:text-neu-accent transition-colors"
+                          className="p-2 text-body hover-soft"
                         >
-                          <Pencil size={12} strokeWidth={1} />
+                          <Pencil strokeWidth={1} className="icon-secondary" />
                         </button>
                         <button
                           onClick={() => handleDeleteReminder(reminder.id)}
-                          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                          className="p-2 text-body hover-soft"
                         >
-                          <Trash2 size={12} strokeWidth={1} />
+                          <Trash2 strokeWidth={1} className="icon-secondary" />
                         </button>
                       </div>
                     </div>
@@ -321,7 +321,7 @@ export const ProfileView: React.FC = () => {
                   {/* Add/Edit Reminder Form */}
                   {isAddingReminder ? (
                     <div className="bg-neu-base p-4 rounded-xl shadow-neu-pressed animate-in fade-in slide-in-from-top-2">
-                      <h4 className="text-sm font-bold text-gray-500 mb-3">
+                      <h4 className="text-body mb-3">
                         {editingReminderId ? 'עריכת תזכורת' : 'תזכורת חדשה'}
                       </h4>
 
@@ -330,7 +330,7 @@ export const ProfileView: React.FC = () => {
                           type="time"
                           value={newReminderTime}
                           onChange={(e) => setNewReminderTime(e.target.value)}
-                          className="flex-1 bg-neu-base shadow-neu-inner p-3 rounded-xl text-center font-mono text-lg outline-none focus:ring-2 focus:ring-neu-accent/50"
+                          className="flex-1 bg-neu-base shadow-neu-inner p-3 rounded-xl text-center font-mono text-h2 outline-none"
                         />
                       </div>
 
@@ -345,7 +345,7 @@ export const ProfileView: React.FC = () => {
                                 setNewReminderDays([...newReminderDays, idx]);
                               }
                             }}
-                            className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${newReminderDays.includes(idx) ? 'bg-neu-accent text-white shadow-md scale-110' : 'bg-neu-base text-gray-400 shadow-neu-flat'}`}
+                            className={`w-8 h-8 rounded-full text-body transition-all ${newReminderDays.includes(idx) ? 'shadow-neu-pressed scale-110' : 'bg-neu-base text-meta shadow-neu-flat'}`}
                           >
                             {day}
                           </button>
@@ -360,13 +360,13 @@ export const ProfileView: React.FC = () => {
                             setNewReminderTime('08:00');
                             setNewReminderDays([0, 1, 2, 3, 4]);
                           }}
-                          className="flex-1 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                          className="flex-1 py-2 text-body hover-soft rounded-lg transition-colors"
                         >
                           ביטול
                         </button>
                         <button
                           onClick={handleSaveReminder}
-                          className="flex-1 py-2 bg-neu-accent text-white rounded-lg shadow-md hover:brightness-110 transition-all"
+                          className="flex-1 py-2 bg-neu-base text-body rounded-lg shadow-md hover-soft transition-all"
                         >
                           שמור
                         </button>
@@ -380,10 +380,10 @@ export const ProfileView: React.FC = () => {
                         setNewReminderTime('08:00');
                         setNewReminderDays([0, 1, 2, 3, 4]);
                       }}
-                      className="w-full py-3 flex items-center justify-center gap-2 text-neu-accent font-medium bg-neu-base rounded-xl shadow-neu-flat active:shadow-neu-pressed transition-all"
+                      className="w-full py-3 flex items-center justify-center gap-2 text-body bg-neu-base rounded-xl shadow-neu-flat active:shadow-neu-pressed transition-all hover-soft"
                     >
-                      <Plus size={20} strokeWidth={1} />
-                      <span>הוסף תזכורת חדשה</span>
+                      <Plus strokeWidth={1} className="icon-secondary" />
+                      <span className="text-body">הוסף תזכורת חדשה</span>
                     </button>
                   )}
                 </div>
@@ -396,11 +396,11 @@ export const ProfileView: React.FC = () => {
               toggle={null}
               value={false}
             >
-              <div className="bg-gray-50 p-3 rounded-lg text-center">
-                <p className="text-[13px] text-neu-text-secondary mb-2">הירשם כדי להפעיל תזכורות אישיות</p>
+              <div className="bg-neu-base p-3 rounded-lg text-center">
+                <p className="text-body mb-2">הירשם כדי להפעיל תזכורות אישיות</p>
                 <button
                   onClick={handleToggleRegistration}
-                  className="text-xs text-neu-accent font-bold hover:underline"
+                  className="text-body hover-soft"
                 >
                   התחבר עכשיו
                 </button>
@@ -429,34 +429,34 @@ export const ProfileView: React.FC = () => {
             {soundsEnabled && (
               <>
                 <div className="flex flex-col gap-1 animate-in slide-in-from-top-2 duration-200">
-                  <span className="text-xs text-neu-text-secondary">מוזיקה</span>
+                  <span className="text-meta">מוזיקה</span>
                   <div className="flex items-center gap-4">
-                    <span className="text-xs text-gray-400 w-6">0</span>
+                    <span className="text-meta w-6">0</span>
                     <input
                       type="range"
                       min="0"
                       max="100"
                       value={musicVolume}
                       onChange={handleMusicVolumeChange}
-                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-neu-accent"
+                      className="flex-1 h-2 bg-neu-base rounded-lg appearance-none cursor-pointer accent-[var(--text-primary)]"
                     />
-                    <span className="text-xs text-gray-400 w-6 text-left">{musicVolume}</span>
+                    <span className="text-meta w-6 text-left">{musicVolume}</span>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1 animate-in slide-in-from-top-2 duration-200 delay-75">
-                  <span className="text-xs text-neu-text-secondary">הדרכה קולית</span>
+                  <span className="text-meta">הדרכה קולית</span>
                   <div className="flex items-center gap-4">
-                    <span className="text-xs text-gray-400 w-6">0</span>
+                    <span className="text-meta w-6">0</span>
                     <input
                       type="range"
                       min="0"
                       max="100"
                       value={voiceVolume}
                       onChange={handleVoiceVolumeChange}
-                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-neu-accent"
+                      className="flex-1 h-2 bg-neu-base rounded-lg appearance-none cursor-pointer accent-[var(--text-primary)]"
                     />
-                    <span className="text-xs text-gray-400 w-6 text-left">{voiceVolume}</span>
+                    <span className="text-meta w-6 text-left">{voiceVolume}</span>
                   </div>
                 </div>
               </>
@@ -469,7 +469,7 @@ export const ProfileView: React.FC = () => {
       <div>
         <NeuCard>
           <SettingItem icon={Shield} label="מדיניות פרטיות" />
-          <div className="py-4 text-center text-xs text-neu-text-secondary">
+          <div className="py-4 text-center text-meta">
             Neshima App v1.3
           </div>
         </NeuCard>

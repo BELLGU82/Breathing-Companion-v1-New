@@ -37,7 +37,7 @@ export const CategoryView: React.FC = () => {
       name: 'מועדפים',
       description: 'התרגילים שאהבת במיוחד',
       icon: Heart,
-      color: 'text-red-500',
+      color: '',
       defaultPatternId: '',
       patterns: favIds
     };
@@ -49,7 +49,7 @@ export const CategoryView: React.FC = () => {
       name: 'תרגילים אישיים',
       description: 'תרגילים שיצרת בעצמך',
       icon: Sliders,
-      color: 'text-neu-text',
+      color: '',
       defaultPatternId: '',
       patterns: exercises.map(p => p.id)
     };
@@ -178,11 +178,11 @@ export const CategoryView: React.FC = () => {
       {/* Header */}
       <div className="flex items-center gap-4 p-6 z-20 shrink-0">
         <NeuIconButton onClick={handleBack} className="w-10 h-10">
-          <ChevronRight size={24} />
+          <ChevronRight className="icon-secondary" />
         </NeuIconButton>
         <div>
-          <h1 className="text-2xl font-bold text-neu-text flex items-center gap-2">
-            <CategoryIcon size={24} className={category.color || 'text-neu-text'} strokeWidth={1.5} />
+          <h1 className="text-h1 flex items-center gap-2">
+            <CategoryIcon className="icon-primary" strokeWidth={1.5} />
             {category.name}
           </h1>
         </div>
@@ -193,17 +193,17 @@ export const CategoryView: React.FC = () => {
 
         {exercises.length === 0 ? (
           <div className="flex flex-col items-center justify-center opacity-50 px-8 text-center">
-            <div className="mb-4 text-gray-400">
-              <CategoryIcon size={64} strokeWidth={1} />
+            <div className="mb-4">
+              <CategoryIcon className="icon-primary" strokeWidth={1} />
             </div>
-            <p className="text-gray-500 font-medium text-lg">
+            <p className="text-h2">
               {categoryId === 'favorites' ? 'עדיין לא הוספת תרגילים למועדפים.' : 'לא יצרת עדיין תרגילים אישיים.'}
             </p>
             {categoryId === 'favorites' && (
-              <p className="text-xs text-gray-400 mt-2">סמן תרגילים בלב כדי לראות אותם כאן.</p>
+              <p className="text-body mt-2">סמן תרגילים בלב כדי לראות אותם כאן.</p>
             )}
             {categoryId === 'custom' && (
-              <button onClick={() => navigate('/breathe')} className="mt-6 text-neu-accent font-bold text-sm">
+              <button onClick={() => navigate('/breathe')} className="mt-6 text-body hover-soft">
                 צור תרגיל חדש
               </button>
             )}
@@ -236,14 +236,14 @@ export const CategoryView: React.FC = () => {
                         flex flex-col p-6 gap-4
                         border border-white/40 cursor-pointer select-none
                         snap-center shrink-0 transition-all duration-300 ease-out
-                        ${isActive ? 'scale-100 opacity-100 blur-0' : 'scale-90 opacity-60 blur-[1px]'}
+                        hover-soft ${isActive ? 'scale-100 opacity-100 blur-0' : 'scale-90 opacity-60 blur-[1px]'}
                       `}
                   >
                     {/* 1. Top: Image (Icon) */}
                     <div className="flex justify-center shrink-0">
-                      <div className="w-20 h-20 rounded-full bg-neu-convex flex items-center justify-center text-neu-accent relative overflow-hidden">
-                        <div className={`absolute inset-0 opacity-10 ${category?.color?.replace('text-', 'bg-') || 'bg-gray-500'}`}></div>
-                        <CategoryIcon size={32} strokeWidth={1.5} className={category?.color || 'text-neu-text'} />
+                      <div className="w-20 h-20 rounded-full bg-neu-convex flex items-center justify-center relative overflow-hidden">
+                        <div className="absolute inset-0 opacity-10 bg-neu-base"></div>
+                        <CategoryIcon strokeWidth={1.5} className="icon-primary" />
                       </div>
                     </div>
 
@@ -251,32 +251,32 @@ export const CategoryView: React.FC = () => {
                     <div className="flex-1 flex flex-col items-center text-center gap-3 overflow-hidden">
 
                       {/* Title */}
-                      <h2 className="text-xl font-bold text-neu-text leading-tight px-1">
+                      <h2 className="text-h1 leading-tight px-1">
                         {exercise.name}
                       </h2>
 
                       {/* Reps */}
-                      <span className="inline-block px-3 py-1 rounded-full bg-neu-pressed text-[11px] font-medium text-neu-text/70 shrink-0">
+                      <span className="inline-block px-3 py-1 rounded-full bg-neu-pressed text-[11px] text-body shrink-0">
                         {getReps(exercise)} חזרות
                       </span>
 
                       {/* Instruction */}
                       {exercise.instruction && (
-                        <p className="text-sm text-gray-600 font-medium leading-snug">
+                        <p className="text-body leading-snug">
                           {exercise.instruction}
                         </p>
                       )}
 
                       {/* Benefits */}
                       {exercise.benefits && (
-                        <p className="text-xs text-gray-400 leading-snug mt-1">
+                        <p className="text-body leading-snug mt-1">
                           {exercise.benefits}
                         </p>
                       )}
 
                       {/* Fallback Description if no instruction/benefits (e.g. old custom) */}
                       {!exercise.instruction && !exercise.benefits && (
-                        <p className="text-sm text-gray-500 leading-snug line-clamp-3">
+                        <p className="text-body leading-snug line-clamp-3">
                           {exercise.description}
                         </p>
                       )}
@@ -287,11 +287,10 @@ export const CategoryView: React.FC = () => {
                     <div className="absolute bottom-4 right-4 z-20">
                       <button
                         onClick={(e) => handleToggleFavorite(e, exercise.id)}
-                        className="p-2 rounded-full active:scale-90 transition-transform flex items-center justify-center hover:bg-black/5"
+                        className="p-2 rounded-full active:scale-90 transition-transform flex items-center justify-center hover-soft"
                       >
                         <Heart
-                          size={24}
-                          className={`transition-colors duration-200 ${favorites.includes(exercise.id) ? "text-red-500 fill-red-500" : "text-gray-400"}`}
+                          className={`icon-secondary transition-colors duration-200 ${favorites.includes(exercise.id) ? '' : 'opacity-60'}`}
                           strokeWidth={favorites.includes(exercise.id) ? 0 : 2}
                         />
                       </button>
@@ -302,21 +301,19 @@ export const CategoryView: React.FC = () => {
                       <div className="absolute bottom-4 left-4 z-20 flex gap-2">
                         <button
                           onClick={(e) => handleEditCustom(e, exercise.id)}
-                          className="p-2 rounded-full active:scale-90 transition-transform flex items-center justify-center hover:bg-black/5"
+                          className="p-2 rounded-full active:scale-90 transition-transform flex items-center justify-center hover-soft"
                         >
                           <Edit2
-                            size={20}
-                            className="text-neu-text"
+                            className="icon-secondary"
                             strokeWidth={2}
                           />
                         </button>
                         <button
                           onClick={(e) => handleDeleteCustom(e, exercise.id)}
-                          className="p-2 rounded-full active:scale-90 transition-transform flex items-center justify-center hover:bg-black/5"
+                          className="p-2 rounded-full active:scale-90 transition-transform flex items-center justify-center hover-soft"
                         >
                           <Trash2
-                            size={20}
-                            className="text-red-400"
+                            className="icon-secondary"
                             strokeWidth={2}
                           />
                         </button>
@@ -335,7 +332,7 @@ export const CategoryView: React.FC = () => {
                   onClick={() => scrollToCard(idx)}
                   className={`
                       h-2 rounded-full transition-all duration-300 cursor-pointer
-                      ${idx === activeIndex ? 'w-6 bg-neu-accent shadow-neu-pressed' : 'w-2 bg-gray-300 hover:bg-gray-400'}
+                      ${idx === activeIndex ? 'w-6 bg-neu-dark shadow-neu-pressed' : 'w-2 bg-neu-base'}
                     `}
                   aria-label={`Go to exercise ${idx + 1}`}
                 />

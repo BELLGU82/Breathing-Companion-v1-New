@@ -211,7 +211,7 @@ export const CATEGORIES: Category[] = [
     name: 'בוקר',
     description: 'אנרגיה והתעוררות',
     icon: Haze,
-    color: 'text-amber-500',
+    color: '',
     defaultPatternId: 'morning_standing',
     patterns: ['morning_standing', 'morning_ujjayi', 'morning_fire', 'morning_lion', 'morning_bellows']
   },
@@ -220,7 +220,7 @@ export const CATEGORIES: Category[] = [
     name: 'מיקוד',
     description: 'ריכוז וחדות',
     icon: Milestone,
-    color: 'text-blue-500',
+    color: '',
     defaultPatternId: 'focus_equal',
     patterns: ['focus_alt_nostril', 'focus_equal', 'focus_palming', 'focus_count', 'focus_candle']
   },
@@ -229,7 +229,7 @@ export const CATEGORIES: Category[] = [
     name: 'ויסות',
     description: 'הפחתת לחץ וחרדה',
     icon: Waves,
-    color: 'text-teal-500',
+    color: '',
     defaultPatternId: 'regulate_box',
     patterns: ['regulate_box', 'regulate_sigh', 'regulate_grounding', 'regulate_slow_belly', 'regulate_alt_nostril']
   },
@@ -238,7 +238,7 @@ export const CATEGORIES: Category[] = [
     name: 'שינה',
     description: 'הרגעה והירדמות',
     icon: Moon,
-    color: 'text-indigo-500',
+    color: '',
     defaultPatternId: 'sleep_478',
     patterns: ['sleep_478', 'sleep_bhramari', 'sleep_diaphragm', 'sleep_muscle', 'sleep_bodyscan']
   }

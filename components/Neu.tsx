@@ -9,7 +9,7 @@ export const NeuCard = React.forwardRef<
     <div
         ref={ref}
         className={cn(
-            "bg-neu-base rounded-2xl shadow-neu-flat p-6 transition-all duration-200",
+            "bg-neu-base rounded-2xl shadow-neu-flat p-6 transition-all duration-200 hover-soft",
             className
         )}
         {...props}
@@ -25,9 +25,8 @@ export const NeuButton = React.forwardRef<
     <button
         ref={ref}
         className={cn(
-            "bg-neu-base rounded-xl shadow-neu-flat px-6 py-3 font-medium text-neu-text",
-            "active:shadow-neu-pressed transition-all duration-200",
-            "hover:brightness-105",
+            "bg-neu-base rounded-xl shadow-neu-flat px-6 py-3 text-body",
+            "active:shadow-neu-pressed transition-all duration-200 hover-soft",
             className
         )}
         {...props}
@@ -44,7 +43,7 @@ export const NeuIconButton = React.forwardRef<
         ref={ref}
         className={cn(
             "bg-neu-base rounded-full shadow-neu-flat p-3",
-            "active:shadow-neu-pressed transition-all duration-200",
+            "active:shadow-neu-pressed transition-all duration-200 hover-soft",
             "flex items-center justify-center",
             className
         )}

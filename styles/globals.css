@@ -19,7 +19,7 @@
   --neu-text-secondary: #9da4b0;
 
   /* Typography Sizes */
-  --text-h1: 22px;
+  --text-h1: 20px;
   --text-h2: 18px;
   --text-body: 15px;
   --text-meta: 13px;
@@ -97,10 +97,12 @@ body {
 }
 
 @keyframes icon-rise {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-5px);
   }
@@ -111,10 +113,12 @@ body {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.15);
     opacity: 0.9;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -122,26 +126,32 @@ body {
 }
 
 @keyframes icon-sway {
+
   0%,
   100% {
     transform: rotate(0deg);
   }
+
   25% {
     transform: rotate(10deg);
   }
+
   75% {
     transform: rotate(-10deg);
   }
 }
 
 @keyframes icon-rock {
+
   0%,
   100% {
     transform: rotate(0deg);
   }
+
   25% {
     transform: rotate(15deg);
   }
+
   75% {
     transform: rotate(-5deg);
   }
@@ -201,4 +211,12 @@ body {
   width: var(--icon-secondary);
   height: var(--icon-secondary);
   stroke-width: var(--icon-stroke);
+}
+
+.hover-soft {
+  transition: all 0.2s ease;
+}
+
+.hover-soft:hover {
+  opacity: 0.75;
 }

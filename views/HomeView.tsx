@@ -56,20 +56,20 @@ export const HomeView: React.FC = () => {
       {/* Header */}
       <header className="flex justify-between items-center mt-2">
         <div>
-          <h1 className="text-2xl font-bold text-neu-text">שלום, אורח</h1>
-          <p className="text-sm text-gray-500">ברוך הבא למרחב הנשימה שלך.</p>
+          <h1 className="text-h1">שלום, אורח</h1>
+          <p className="text-meta">ברוך הבא למרחב הנשימה שלך.</p>
         </div>
         <div
           onClick={() => navigate('/profile')}
-          className="w-12 h-12 rounded-full shadow-neu-flat flex items-center justify-center cursor-pointer active:shadow-neu-pressed text-neu-text transition-all duration-200"
+          className="w-12 h-12 rounded-full shadow-neu-flat flex items-center justify-center cursor-pointer active:shadow-neu-pressed transition-all duration-200"
         >
-          <Ghost size={20} strokeWidth={1} className="text-neu-text" />
+          <Ghost strokeWidth={1} className="icon-primary" />
         </div>
       </header>
 
       {/* Daily Quote Card - Inset Neumorphic Style */}
       <div className="bg-neu-base rounded-2xl p-6 shadow-[inset_3px_3px_6px_var(--neu-shadow-inset-dark),inset_-3px_-3px_6px_var(--neu-shadow-inset-light)] flex items-center justify-center text-center">
-        <p className="text-neu-text/80 text-sm font-medium italic leading-relaxed">
+        <p className="text-body leading-relaxed">
           "{quote}"
         </p>
       </div>
@@ -78,47 +78,47 @@ export const HomeView: React.FC = () => {
       <div className="grid grid-cols-2 gap-4">
         <div
           onClick={() => navigate('/category/favorites')}
-          className="bg-neu-base rounded-2xl shadow-neu-flat p-6 flex flex-col items-center justify-center gap-3 cursor-pointer active:shadow-neu-pressed transition-all duration-200 aspect-square"
+          className="bg-neu-base rounded-2xl shadow-neu-flat p-6 flex flex-col items-center justify-center gap-3 cursor-pointer active:shadow-neu-pressed transition-all duration-200 aspect-square hover-soft"
         >
-          <Heart size={32} strokeWidth={1} className="text-[#4a5568] dark:text-[#a3b1c6]" />
-          <span className="text-neu-text font-bold text-lg">מועדפים</span>
+          <Heart strokeWidth={1} className="icon-primary" />
+          <span className="text-h2">מועדפים</span>
         </div>
 
         <div
           onClick={() => navigate('/category/custom')}
-          className="bg-neu-base rounded-2xl shadow-neu-flat p-6 flex flex-col items-center justify-center gap-3 cursor-pointer active:shadow-neu-pressed transition-all duration-200 aspect-square"
+          className="bg-neu-base rounded-2xl shadow-neu-flat p-6 flex flex-col items-center justify-center gap-3 cursor-pointer active:shadow-neu-pressed transition-all duration-200 aspect-square hover-soft"
         >
-          <Sliders size={32} strokeWidth={1} className="text-[#4a5568] dark:text-[#a3b1c6]" />
-          <span className="text-neu-text font-bold text-lg text-center leading-tight">תרגילים אישיים</span>
+          <Sliders strokeWidth={1} className="icon-primary" />
+          <span className="text-h2 text-center leading-tight">תרגילים אישיים</span>
         </div>
       </div>
 
       {/* Resume Section - ONLY if interrupted session exists */}
       {interruptedSession && BREATHING_PATTERNS[interruptedSession.patternId] && (
         <div className="mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h2 className="text-lg font-bold text-neu-text mb-4">{getResumeTitle()}</h2>
+          <h2 className="text-h2 mb-4">{getResumeTitle()}</h2>
           <NeuCard className="relative flex items-center space-x-4 space-x-reverse cursor-pointer active:scale-[0.99] transition-transform" onClick={() => navigate(`/session/${interruptedSession.patternId}`)}>
             {/* Close Button INSIDE card */}
             <button
               onClick={handleClearInterruptedSession}
-              className="absolute top-2 left-2 p-1.5 rounded-full hover:bg-black/5 active:bg-black/10 transition-colors z-10"
+              className="absolute top-2 left-2 p-1.5 rounded-full transition-colors z-10 hover-soft"
             >
-              <X size={14} className="text-gray-400" />
+              <X className="icon-secondary" />
             </button>
 
-            <div className="w-12 h-12 rounded-full bg-neu-base shadow-neu-pressed flex items-center justify-center text-neu-accent shrink-0">
-              <Play size={20} fill="currentColor" strokeWidth={1} />
+            <div className="w-12 h-12 rounded-full bg-neu-base shadow-neu-pressed flex items-center justify-center shrink-0">
+              <Play fill="currentColor" strokeWidth={1} className="icon-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-neu-text truncate">{BREATHING_PATTERNS[interruptedSession.patternId].name}</h3>
-              <p className="text-xs text-gray-500 truncate">
+              <h3 className="text-h2 truncate">{BREATHING_PATTERNS[interruptedSession.patternId].name}</h3>
+              <p className="text-meta truncate">
                 {interruptedSession.durationSeconds > 60
                   ? `${Math.floor(interruptedSession.durationSeconds / 60)} דקות`
                   : `${interruptedSession.durationSeconds} שניות`
                 } • לא הושלם
               </p>
             </div>
-            <span className="text-neu-accent font-bold text-sm shrink-0">המשך</span>
+            <span className="text-body shrink-0">המשך</span>
           </NeuCard>
         </div>
       )}
@@ -142,10 +142,10 @@ export const HomeView: React.FC = () => {
       {!interruptedSession && (
         <div className="flex-1 flex flex-col items-center justify-center text-center opacity-60">
           <div className="w-24 h-24 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center mb-4">
-            <Ghost size={32} strokeWidth={1} className="text-neu-text/50" />
+            <Ghost strokeWidth={1} className="icon-primary" />
           </div>
-          <p className="text-sm text-gray-500">אין סשנים פעילים כרגע.</p>
-          <button onClick={() => navigate('/breathe')} className="mt-4 text-neu-accent text-sm font-bold">התחל תרגול חדש</button>
+          <p className="text-meta">אין סשנים פעילים כרגע.</p>
+          <button onClick={() => navigate('/breathe')} className="mt-4 text-body hover-soft">התחל תרגול חדש</button>
         </div>
       )}
     </div>

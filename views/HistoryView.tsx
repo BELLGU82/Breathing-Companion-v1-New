@@ -32,11 +32,11 @@ export const HistoryView: React.FC = () => {
   if (!isRegistered) {
     return (
       <div className="flex flex-col h-full p-6 space-y-8 overflow-y-auto pb-24 items-center justify-center text-center">
-        <div className="w-20 h-20 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center text-neu-text mb-4">
-          <MailCheck size={32} strokeWidth={1} color="#4A5568" />
+        <div className="w-20 h-20 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center mb-4">
+          <MailCheck strokeWidth={1} className="icon-primary" />
         </div>
-        <h2 className="text-2xl font-bold text-neu-text">התקדמות אישית</h2>
-        <p className="text-gray-500 max-w-xs">
+        <h2 className="text-h1">התקדמות אישית</h2>
+        <p className="text-body max-w-xs">
           התחבר כדי לעקוב אחר רצף התרגולים שלך, דקות תרגול שבועיות והיסטוריית סשנים.
         </p>
         <NeuButton onClick={() => navigate('/settings')} className="w-full max-w-xs">
@@ -49,8 +49,8 @@ export const HistoryView: React.FC = () => {
   return (
     <div className="flex flex-col h-full p-6 space-y-6 overflow-y-auto pb-24">
       <header className="mt-2">
-        <h1 className="text-2xl font-bold text-neu-text">ההתקדמות שלך</h1>
-        <p className="text-sm text-gray-500">
+        <h1 className="text-h1">ההתקדמות שלך</h1>
+        <p className="text-body">
           {stats.streak > 0 ? `רצף של ${stats.streak} ימים! כל הכבוד.` : 'בוא נתחיל רצף חדש היום.'}
         </p>
       </header>
@@ -58,25 +58,25 @@ export const HistoryView: React.FC = () => {
       {/* Top Stats Row */}
       <div className="grid grid-cols-2 gap-4">
         <NeuCard className="flex flex-col items-center justify-center p-4">
-          <div className="text-blue-500 mb-2"><Activity size={24} strokeWidth={1} /></div>
-          <span className="text-2xl font-bold text-neu-text">{stats.totalMinutes}</span>
-          <span className="text-xs text-gray-500">דקות (7 ימים)</span>
+          <div className="mb-2"><Activity strokeWidth={1} className="icon-primary" /></div>
+          <span className="text-h1">{stats.totalMinutes}</span>
+          <span className="text-meta">דקות (7 ימים)</span>
         </NeuCard>
         <NeuCard className="flex flex-col items-center justify-center p-4">
-          <div className="text-orange-500 mb-2"><Calendar size={24} strokeWidth={1} /></div>
-          <span className="text-2xl font-bold text-neu-text">{stats.streak}</span>
-          <span className="text-xs text-gray-500">ימי רצף</span>
+          <div className="mb-2"><Calendar strokeWidth={1} className="icon-primary" /></div>
+          <span className="text-h1">{stats.streak}</span>
+          <span className="text-meta">ימי רצף</span>
         </NeuCard>
       </div>
 
       {/* Chart */}
       <NeuCard>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-bold text-neu-text flex items-center gap-2">
-            <BarChart2 size={18} strokeWidth={1} color="#4A5568" />
+          <h3 className="text-h2 flex items-center gap-2">
+            <BarChart2 strokeWidth={1} className="icon-secondary" />
             פעילות שבועית
           </h3>
-          <span className="text-xs text-gray-400">7 ימים אחרונים (דקות)</span>
+          <span className="text-meta">7 ימים אחרונים (דקות)</span>
         </div>
         
         <div className="flex items-end justify-between h-32 px-2">
@@ -90,11 +90,11 @@ export const HistoryView: React.FC = () => {
                 <div className="relative w-2 bg-neu-base shadow-neu-pressed rounded-full h-24 flex items-end overflow-hidden">
                   <div 
                     style={{ height: `${heightPercentage}%` }} 
-                    className={`w-full rounded-full transition-all duration-500 ${value > 0 ? 'bg-neu-accent' : 'bg-transparent'}`}
+                    className={`w-full rounded-full transition-all duration-500 ${value > 0 ? 'bg-neu-dark' : 'bg-transparent'}`}
                     title={`${value} דקות`}
                   />
                 </div>
-                <span className="text-xs font-medium text-gray-400">{day}</span>
+                <span className="text-meta">{day}</span>
               </div>
             );
           })}
@@ -103,20 +103,20 @@ export const HistoryView: React.FC = () => {
 
       {/* Recent List */}
       <div>
-        <h2 className="text-lg font-bold text-neu-text mb-4">היסטוריה אחרונה</h2>
+        <h2 className="text-h2 mb-4">היסטוריה אחרונה</h2>
         <div className="space-y-4">
           {history.length === 0 ? (
-             <div className="text-center text-sm text-gray-400 py-4">עדיין לא תורגלו סשנים</div>
+             <div className="text-center text-body py-4">עדיין לא תורגלו סשנים</div>
           ) : (
             history.map((session) => (
                <NeuCard key={session.id} className="!p-4 flex items-center justify-between">
                   <div>
-                    <h4 className="font-bold text-neu-text text-sm">{session.patternName}</h4>
-                    <span className="text-xs text-gray-500">
+                    <h4 className="text-h2">{session.patternName}</h4>
+                    <span className="text-meta">
                       {new Date(session.timestamp).toLocaleDateString('he-IL', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-neu-accent">
+                  <span className="text-body">
                     {Math.floor(session.durationSeconds / 60)}:{String(session.durationSeconds % 60).padStart(2, '0')} דק׳
                   </span>
                </NeuCard>

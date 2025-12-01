@@ -281,10 +281,10 @@ export const SessionView: React.FC = () => {
 
   // Volume Control Logic
   const getVolumeIcon = () => {
-    if (musicVolume === 0) return <VolumeX size={24} strokeWidth={1} />;
-    if (musicVolume < 30) return <Volume size={24} strokeWidth={1} />;
-    if (musicVolume < 70) return <Volume1 size={24} strokeWidth={1} />;
-    return <Volume2 size={24} strokeWidth={1} />;
+    if (musicVolume === 0) return <VolumeX strokeWidth={1} className="icon-secondary" />;
+    if (musicVolume < 30) return <Volume strokeWidth={1} className="icon-secondary" />;
+    if (musicVolume < 70) return <Volume1 strokeWidth={1} className="icon-secondary" />;
+    return <Volume2 strokeWidth={1} className="icon-secondary" />;
   };
 
   // Controls - Stabilized with useCallback
@@ -437,19 +437,19 @@ export const SessionView: React.FC = () => {
   if (playbackState === 'completed') {
     return (
       <div className="flex flex-col h-full bg-neu-base p-6 items-center justify-center animate-in fade-in duration-500">
-        <h1 className="text-3xl font-bold text-neu-text mb-2 text-center">כל הכבוד!</h1>
-        <p className="text-gray-500 mb-8 text-center">
+        <h1 className="text-h1 mb-2 text-center">כל הכבוד!</h1>
+        <p className="text-body mb-8 text-center">
           סיימת את {pattern.name} בהצלחה.
         </p>
 
         {nextExercise && (
           <div className="w-full mb-8">
-            <p className="text-sm font-bold text-neu-accent mb-3 text-center">התרגיל הבא:</p>
+            <p className="text-body mb-3 text-center">התרגיל הבא:</p>
             <NeuCard className="bg-white/50 border border-white/60">
-              <h3 className="font-bold text-neu-text text-lg">{nextExercise.name}</h3>
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{nextExercise.description}</p>
+              <h3 className="text-h2">{nextExercise.name}</h3>
+              <p className="text-meta mt-1 line-clamp-2">{nextExercise.description}</p>
               <div className="mt-3 flex gap-2">
-                <span className="text-[10px] bg-neu-base px-2 py-1 rounded-full text-gray-500">
+                <span className="text-[10px] bg-neu-base px-2 py-1 rounded-full text-meta">
                   {Math.ceil((nextExercise.recommendedDuration || 120) / 60)} דקות
                 </span>
               </div>
@@ -461,20 +461,20 @@ export const SessionView: React.FC = () => {
           {/* Home Button */}
           <NeuButton
             onClick={() => navigate('/')}
-            className="!w-16 !h-16 !rounded-2xl !p-0 flex items-center justify-center bg-neu-base text-neu-text shadow-neu-flat active:shadow-neu-pressed transition-all"
+            className="!w-16 !h-16 !rounded-2xl !p-0 flex items-center justify-center bg-neu-base shadow-neu-flat active:shadow-neu-pressed transition-all"
             aria-label="חזרה הביתה"
           >
-            <Home size={24} strokeWidth={1.5} />
+            <Home strokeWidth={1.5} className="icon-primary" />
           </NeuButton>
 
           {/* Next Exercise Button (if exists) */}
           {nextExercise && (
             <NeuButton
               onClick={handleNextExercise}
-              className="!w-16 !h-16 !rounded-2xl !p-0 flex items-center justify-center bg-neu-base text-neu-text shadow-neu-flat active:shadow-neu-pressed transition-all"
+              className="!w-16 !h-16 !rounded-2xl !p-0 flex items-center justify-center bg-neu-base shadow-neu-flat active:shadow-neu-pressed transition-all"
               aria-label="התרגיל הבא"
             >
-              <ArrowLeft size={28} strokeWidth={1.5} />
+              <ArrowLeft strokeWidth={1.5} className="icon-primary" />
             </NeuButton>
           )}
         </div>
@@ -502,30 +502,29 @@ export const SessionView: React.FC = () => {
           className="w-12 h-12"
           aria-label="יציאה מהסשן"
         >
-          <X size={20} strokeWidth={1} className="text-neu-text" />
+          <X strokeWidth={1} className="icon-secondary" />
         </NeuIconButton>
       </div>
 
       {/* Favorites Button - Top Right (NEW) */}
       <div className="absolute top-6 right-6 z-50">
-        <NeuIconButton
-          onClick={handleToggleFavorite}
-          className="w-12 h-12"
-          aria-label="הוסף למועדפים"
-        >
-          <Heart
-            size={20}
-            strokeWidth={isFavorite ? 0 : 1}
-            className={`${isFavorite ? 'fill-red-500 text-red-500' : 'text-neu-text'}`}
-          />
-        </NeuIconButton>
-      </div>
+          <NeuIconButton
+            onClick={handleToggleFavorite}
+            className="w-12 h-12"
+            aria-label="הוסף למועדפים"
+          >
+            <Heart
+              strokeWidth={isFavorite ? 0 : 1}
+              className={`icon-secondary ${isFavorite ? '' : 'opacity-70'}`}
+            />
+          </NeuIconButton>
+        </div>
 
       {/* Top Info */}
       <div className="pt-10 pb-4 flex flex-col justify-center items-center z-10 space-y-2 px-6 text-center mt-4">
-        <h1 className="text-neu-text font-bold text-xl">{pattern.name}</h1>
-        <p className="text-sm text-neu-text/70 font-medium">מטרת התרגיל: {pattern.benefits}</p>
-        <p className="text-xs text-neu-text/50 font-mono" dir="ltr">{getRhythmString}</p>
+        <h1 className="text-h1">{pattern.name}</h1>
+        <p className="text-body">מטרת התרגיל: {pattern.benefits}</p>
+        <p className="text-meta font-mono" dir="ltr">{getRhythmString}</p>
       </div>
 
       {/* Breathing Circle Area */}
@@ -552,11 +551,7 @@ export const SessionView: React.FC = () => {
           <div className="w-56 h-56 rounded-full shadow-neu-pressed opacity-50 absolute pointer-events-none" />
 
           {/* Color Overlay */}
-          <div className={`w-full h-full rounded-full opacity-10 transition-colors duration-500 absolute pointer-events-none ${currentPhase === BreathingPhase.Inhale ? 'bg-blue-400' :
-            currentPhase === BreathingPhase.Exhale ? 'bg-teal-400' :
-              currentPhase === BreathingPhase.Rest ? 'bg-green-400' :
-                'bg-gray-400'
-            }`} />
+          <div className="w-full h-full rounded-full opacity-10 transition-colors duration-500 absolute pointer-events-none bg-neu-dark" />
 
           {/* Content Container */}
           <div className="absolute z-20 flex flex-col items-center justify-center w-full h-full pointer-events-none py-6">
@@ -564,7 +559,7 @@ export const SessionView: React.FC = () => {
             {/* Countdown Overlay */}
             {countdown !== null && (
               <div className="absolute inset-0 flex items-center justify-center z-50 bg-neu-base/90 rounded-full backdrop-blur-sm animate-in fade-in duration-200">
-                <span className="text-8xl font-bold text-neu-accent animate-pulse">
+                <span className="text-h1 animate-pulse">
                   {countdown}
                 </span>
               </div>
@@ -573,30 +568,30 @@ export const SessionView: React.FC = () => {
             {/* Paused Overlay */}
             {playbackState === 'paused' && countdown === null && (
               <div className="absolute inset-0 flex items-center justify-center z-30 bg-neu-base/60 rounded-full backdrop-blur-[2px]">
-                <span className="font-medium text-neu-text/80 text-lg">הקש להמשך</span>
+                <span className="text-h2">הקש להמשך</span>
               </div>
             )}
 
             {/* 1. Top: Phase Name */}
             <div className="flex-1 flex items-end pb-2 flex-col justify-end">
-              <span className="text-neu-text/60 text-sm font-medium uppercase tracking-widest">
+              <span className="text-body uppercase tracking-widest">
                 {playbackState === 'idle' && countdown === null ? 'מוכן?' : PHASE_LABELS[currentPhase]}
               </span>
               {currentPhase === BreathingPhase.Rest && (
-                <span className="text-[10px] text-gray-400 mt-1">נשום רגיל</span>
+                <span className="text-meta mt-1">נשום רגיל</span>
               )}
             </div>
 
             {/* 2. Center: Big Countdown */}
             <div className="flex items-center justify-center h-20">
-              <span className={`text-6xl font-bold text-neu-text font-mono tabular-nums leading-none transition-opacity duration-300 ${playbackState === 'paused' ? 'opacity-20' : 'opacity-100'}`}>
+              <span className={`text-h1 font-mono tabular-nums leading-none transition-opacity duration-300 ${playbackState === 'paused' ? 'opacity-20' : 'opacity-100'}`}>
                 {phaseTimeLeft}
               </span>
             </div>
 
             {/* 3. Bottom: Cycle Counter */}
             <div className="flex items-center justify-center pt-2">
-              <span className="text-xs text-neu-text/50 font-medium">
+              <span className="text-meta">
                 חזרה {currentCycle}/{totalCycles}
               </span>
             </div>
@@ -618,7 +613,7 @@ export const SessionView: React.FC = () => {
               AudioService.setMuted(newMuted);
               setMusicVolume(newMuted ? 0 : StorageService.getMusicVolume());
             }}
-            className="cursor-pointer text-neu-text/70 hover:text-neu-text transition-colors shrink-0"
+            className="cursor-pointer text-body transition-colors shrink-0"
           >
             {getVolumeIcon()}
           </div>
@@ -633,7 +628,7 @@ export const SessionView: React.FC = () => {
               setMusicVolume(newVol);
               AudioService.setBackgroundVolume(newVol);
             }}
-            className="w-full h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
+            className="w-full h-1.5 bg-neu-base rounded-lg appearance-none cursor-pointer accent-[var(--text-primary)]"
           />
         </div>
 
@@ -645,9 +640,9 @@ export const SessionView: React.FC = () => {
               setVoiceVolume(newVol);
               AudioService.setVoiceVolume(newVol);
             }}
-            className="cursor-pointer text-neu-text/70 hover:text-neu-text transition-colors shrink-0"
+            className="cursor-pointer text-body transition-colors shrink-0"
           >
-            {voiceVolume === 0 ? <MicOff size={20} strokeWidth={1} /> : <Mic size={20} strokeWidth={1} />}
+            {voiceVolume === 0 ? <MicOff strokeWidth={1} className="icon-secondary" /> : <Mic strokeWidth={1} className="icon-secondary" />}
           </div>
 
           <input
@@ -660,7 +655,7 @@ export const SessionView: React.FC = () => {
               setVoiceVolume(newVol);
               AudioService.setVoiceVolume(newVol);
             }}
-            className="w-full h-1.5 bg-gray-300/50 rounded-lg appearance-none cursor-pointer accent-neu-text hover:accent-neu-accent transition-all"
+            className="w-full h-1.5 bg-neu-base rounded-lg appearance-none cursor-pointer accent-[var(--text-primary)]"
           />
         </div>
 
