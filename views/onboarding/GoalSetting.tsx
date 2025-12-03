@@ -34,7 +34,7 @@ export const GoalSetting: React.FC<GoalSettingProps> = ({ onComplete, onSkip }) 
             {/* Header */}
             <div className="text-center mb-8 mt-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <Target className="icon-primary" size={24} />
+                    <Target className="icon-primary" />
                     <h1 className="text-h1">הצב יעד אישי</h1>
                 </div>
                 <p className="text-body">כמה ימים ברצף תרצה לתרגל?</p>
@@ -50,16 +50,16 @@ export const GoalSetting: React.FC<GoalSettingProps> = ({ onComplete, onSkip }) 
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     className="relative"
                 >
-                    <div className="w-48 h-48 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center relative overflow-hidden">
+                    <div className="w-48 h-48 rounded-full glass flex items-center justify-center relative overflow-hidden">
                         {/* Inner Circle */}
-                        <div className="w-40 h-40 rounded-full bg-neu-base shadow-neu-pressed flex flex-col items-center justify-center">
-                            <span className="text-[64px] font-bold text-primary leading-none">{targetDays}</span>
+                        <div className="w-40 h-40 rounded-full glass flex flex-col items-center justify-center">
+                            <span className="text-h1 leading-none">{targetDays}</span>
                             <span className="text-body mt-1">ימים</span>
                         </div>
 
                         {/* Icon */}
                         <div className="absolute top-4 right-4">
-                            <TrendingUp className="icon-primary" size={20} />
+                            <TrendingUp className="icon-primary" />
                         </div>
                     </div>
                 </motion.div>
@@ -72,12 +72,9 @@ export const GoalSetting: React.FC<GoalSettingProps> = ({ onComplete, onSkip }) 
                             <button
                                 key={days}
                                 onClick={() => handleGoalSelect(days)}
-                                className={`aspect-square rounded-xl transition-all ${targetDays === days
-                                        ? 'bg-neu-base shadow-neu-pressed scale-110'
-                                        : 'bg-neu-base shadow-neu-flat hover-soft'
-                                    }`}
+                                className={`aspect-square rounded-xl transition-all glass ${targetDays === days ? 'scale-110' : 'hover-soft'}`}
                             >
-                                <span className={`text-body ${targetDays === days ? 'font-semibold' : ''}`}>
+                                <span className="text-body">
                                     {days}
                                 </span>
                             </button>
@@ -86,7 +83,7 @@ export const GoalSetting: React.FC<GoalSettingProps> = ({ onComplete, onSkip }) 
 
                     {/* Custom Input */}
                     <div className="pt-2">
-                        <p className="text-meta text-center mb-2 text-[12px]">או בחר מספר אחר:</p>
+                        <p className="text-meta text-center mb-2">או בחר מספר אחר:</p>
                         <input
                             type="number"
                             min="1"
@@ -96,7 +93,7 @@ export const GoalSetting: React.FC<GoalSettingProps> = ({ onComplete, onSkip }) 
                                 const val = parseInt(e.target.value) || 1;
                                 handleGoalSelect(Math.min(365, Math.max(1, val)));
                             }}
-                            className="w-full bg-neu-base shadow-neu-inner rounded-xl p-3 text-center text-h2 outline-none"
+                            className="w-full glass rounded-xl p-3 text-center text-h2 outline-none"
                         />
                     </div>
                 </div>

@@ -46,24 +46,24 @@ export const NotificationsSetup: React.FC<NotificationsSetupProps> = ({ onComple
             {/* Header */}
             <div className="text-center mb-6 mt-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <Bell className="icon-primary" size={24} />
+                    <Bell className="icon-primary" />
                     <h1 className="text-h1">תזכורות יומיות</h1>
                 </div>
                 <p className="text-body">קבל תזכורת לתרגל בזמנים שמתאימים לך</p>
             </div>
 
             {/* Notification Preview */}
-            <div className="bg-neu-base shadow-neu-inner rounded-2xl p-4 mb-6 border border-white/30">
+            <div className="glass rounded-2xl p-4 mb-6 border border-white/30">
                 <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-neu-dark shadow-sm flex items-center justify-center shrink-0">
-                        <Bell className="icon-primary" size={18} />
+                    <div className="w-10 h-10 rounded-lg glass flex items-center justify-center shrink-0">
+                        <Bell className="icon-primary" />
                     </div>
                     <div className="flex-1">
-                        <p className="text-body font-medium mb-1">נשימה - זמן לתרגל 🌿</p>
-                        <p className="text-meta text-[13px]">היי! זמן נהדר לנשום עמוק ולהירגע</p>
+                        <p className="text-body mb-1">נשימה - זמן לתרגל 🌿</p>
+                        <p className="text-meta">היי! זמן נהדר לנשום עמוק ולהירגע</p>
                     </div>
                 </div>
-                <p className="text-meta text-[11px] mt-2 text-center">כך תיראה התזכורת שלך</p>
+                <p className="text-meta mt-2 text-center">כך תיראה התזכורת שלך</p>
             </div>
 
             {/* Time Options */}
@@ -123,24 +123,18 @@ const NotificationOption: React.FC<{
     onTimeChange: (time: string) => void;
 }> = ({ icon: Icon, label, enabled, time, onToggle, onTimeChange }) => {
     return (
-        <div
-            className={`bg-neu-base rounded-2xl p-4 transition-all ${enabled ? 'shadow-neu-pressed' : 'shadow-neu-flat'
-                }`}
-        >
+        <div className="glass rounded-2xl p-4 transition-all">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                    <Icon className="icon-primary" size={20} strokeWidth={1.5} />
+                    <Icon className="icon-primary" strokeWidth={1.5} />
                     <span className="text-body">{label}</span>
                 </div>
                 <button
                     onClick={onToggle}
-                    className={`w-12 h-7 rounded-full transition-all relative ${enabled
-                            ? 'bg-neu-dark shadow-neu-pressed'
-                            : 'bg-neu-base shadow-neu-inner'
-                        }`}
+                    className="w-12 h-7 rounded-full transition-all relative glass"
                 >
                     <div
-                        className={`absolute top-1 w-5 h-5 rounded-full bg-neu-base shadow-sm transition-all ${enabled ? 'left-6' : 'left-1'
+                        className={`absolute top-1 w-5 h-5 rounded-full glass transition-all ${enabled ? 'left-6' : 'left-1'
                             }`}
                     />
                 </button>

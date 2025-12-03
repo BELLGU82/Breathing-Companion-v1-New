@@ -79,9 +79,9 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ onSignUp, onSkip }) 
                             className="w-full bg-neu-base shadow-neu-inner rounded-xl p-4 pr-12 outline-none text-body"
                             dir="ltr"
                         />
-                        <Mail className="icon-secondary absolute right-4 top-1/2 -translate-y-1/2" size={18} />
+                        <Mail className="icon-secondary absolute right-4 top-1/2 -translate-y-1/2" />
                     </div>
-                    {errors.email && <p className="text-[12px] text-red-500 mr-2">{errors.email}</p>}
+                    {errors.email && <p className="text-meta mr-2">{errors.email}</p>}
                 </div>
 
                 {/* Password Field */}
@@ -96,19 +96,19 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ onSignUp, onSkip }) 
                             className="w-full bg-neu-base shadow-neu-inner rounded-xl p-4 pr-12 pl-12 outline-none text-body"
                             dir="ltr"
                         />
-                        <Lock className="icon-secondary absolute right-4 top-1/2 -translate-y-1/2" size={18} />
+                        <Lock className="icon-secondary absolute right-4 top-1/2 -translate-y-1/2" />
                         <button
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute left-4 top-1/2 -translate-y-1/2"
                         >
                             {showPassword ? (
-                                <EyeOff className="icon-secondary" size={18} />
+                                <EyeOff className="icon-secondary" />
                             ) : (
-                                <Eye className="icon-secondary" size={18} />
+                                <Eye className="icon-secondary" />
                             )}
                         </button>
                     </div>
-                    {errors.password && <p className="text-[12px] text-red-500 mr-2">{errors.password}</p>}
+                    {errors.password && <p className="text-meta mr-2">{errors.password}</p>}
                 </div>
 
                 {/* Confirm Password Field */}
@@ -123,25 +123,25 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ onSignUp, onSkip }) 
                             className="w-full bg-neu-base shadow-neu-inner rounded-xl p-4 pr-12 outline-none text-body"
                             dir="ltr"
                         />
-                        <Lock className="icon-secondary absolute right-4 top-1/2 -translate-y-1/2" size={18} />
+                        <Lock className="icon-secondary absolute right-4 top-1/2 -translate-y-1/2" />
                     </div>
-                    {errors.confirm && <p className="text-[12px] text-red-500 mr-2">{errors.confirm}</p>}
+                    {errors.confirm && <p className="text-meta mr-2">{errors.confirm}</p>}
                 </div>
 
                 {/* Divider */}
                 <div className="flex items-center gap-4 py-4">
-                    <div className="flex-1 h-[1px] bg-neu-base shadow-neu-inner" />
+                    <div className="flex-1 h-[1px] glass" />
                     <span className="text-meta">או</span>
-                    <div className="flex-1 h-[1px] bg-neu-base shadow-neu-inner" />
+                    <div className="flex-1 h-[1px] glass" />
                 </div>
 
                 {/* Google Sign-In (Mock) */}
                 <button
                     onClick={handleGoogleSignUp}
-                    className="w-full bg-neu-base shadow-neu-flat rounded-xl p-4 flex items-center justify-center gap-3 hover-soft active:shadow-neu-pressed transition-all"
+                    className="w-full glass rounded-xl p-4 flex items-center justify-center gap-3 hover-soft transition-all"
                 >
-                    <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-                        <span className="text-[14px]">G</span>
+                    <div className="w-5 h-5 glass rounded-full flex items-center justify-center">
+                        <span className="text-body">G</span>
                     </div>
                     <span className="text-body">המשך עם Google</span>
                 </button>

@@ -80,7 +80,7 @@ export const TermsScreen: React.FC<TermsScreenProps> = ({ onAccept }) => {
             {/* Header */}
             <div className="text-center mb-6 mt-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                    <ScrollText className="icon-primary" size={24} />
+                    <ScrollText className="icon-primary" />
                     <h1 className="text-h1">תנאי שימוש</h1>
                 </div>
                 <p className="text-meta">קרא בעיון ואשר להמשך</p>
@@ -90,7 +90,7 @@ export const TermsScreen: React.FC<TermsScreenProps> = ({ onAccept }) => {
             <div
                 ref={scrollContainerRef}
                 onScroll={handleScroll}
-                className="flex-1 bg-neu-base shadow-neu-inner rounded-2xl p-6 mb-6 overflow-y-auto"
+                className="flex-1 glass rounded-2xl p-6 mb-6 overflow-y-auto"
             >
                 <div className="prose prose-sm max-w-none text-body leading-relaxed whitespace-pre-wrap">
                     {TERMS_TEXT}
@@ -100,7 +100,7 @@ export const TermsScreen: React.FC<TermsScreenProps> = ({ onAccept }) => {
             {/* Scroll Indicator */}
             {!hasScrolledToBottom && (
                 <div className="text-center mb-4 animate-pulse">
-                    <p className="text-meta text-[12px]">↓ גלול למטה לקריאה מלאה ↓</p>
+                    <p className="text-meta">↓ גלול למטה לקריאה מלאה ↓</p>
                 </div>
             )}
 
@@ -108,15 +108,12 @@ export const TermsScreen: React.FC<TermsScreenProps> = ({ onAccept }) => {
             <button
                 onClick={handleCheckboxToggle}
                 disabled={!hasScrolledToBottom}
-                className={`flex items-center gap-3 p-4 rounded-xl mb-4 transition-all ${hasScrolledToBottom
-                        ? 'bg-neu-base shadow-neu-flat hover-soft active:shadow-neu-pressed cursor-pointer'
-                        : 'bg-neu-base opacity-50 cursor-not-allowed'
-                    }`}
+                className={`flex items-center gap-3 p-4 rounded-xl mb-4 transition-all glass ${hasScrolledToBottom ? 'hover-soft cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
             >
                 {hasAccepted ? (
-                    <CheckCircle2 className="icon-primary" strokeWidth={2} size={24} />
+                    <CheckCircle2 className="icon-primary" strokeWidth={2} />
                 ) : (
-                    <Circle className="icon-secondary" strokeWidth={2} size={24} />
+                    <Circle className="icon-secondary" strokeWidth={2} />
                 )}
                 <span className="text-body flex-1 text-right">
                     קראתי ואני מסכים לתנאי השימוש ומדיניות הפרטיות

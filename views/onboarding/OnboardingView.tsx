@@ -91,11 +91,11 @@ export const OnboardingView: React.FC = () => {
     const progress = ((steps.indexOf(currentStep) + 1) / steps.length) * 100;
 
     return (
-        <div className="flex flex-col h-full bg-neu-base overflow-hidden">
+        <div className="flex flex-col h-full glass overflow-hidden">
             {/* Progress Bar */}
-            <div className="w-full h-1 bg-neu-base shadow-neu-inner">
+            <div className="w-full h-1 glass">
                 <motion.div
-                    className="h-full bg-neu-dark"
+                    className="h-full glass"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.3 }}

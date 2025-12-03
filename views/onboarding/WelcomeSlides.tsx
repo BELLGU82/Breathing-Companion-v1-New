@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Wind, Heart, TrendingUp } from 'lucide-react';
+import { ChevronLeft, Wind, Heart, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NeuButton } from '../../components/Neu';
 
@@ -106,7 +106,7 @@ export const WelcomeSlides: React.FC<WelcomeSlidesProps> = ({ onNext, onSkip }) 
                 className="w-full h-14 flex items-center justify-center gap-2"
             >
                 <span className="text-h2">{activeSlide < slides.length - 1 ? 'המשך' : 'בואו נתחיל'}</span>
-                <ChevronRight className="icon-secondary" strokeWidth={2} />
+                <ChevronLeft className="icon-secondary" strokeWidth={2} />
             </NeuButton>
         </div>
     );
