@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { HomeView } from './views/HomeView';
 import { SessionView } from './views/SessionView';
 import { ProfileView } from './views/ProfileView';
@@ -7,13 +7,30 @@ import { BreatheView } from './views/BreatheView';
 import { CategoryView } from './views/CategoryView';
 import { BottomNavigation } from './components/BottomNavigation';
 import { StorageService } from './services/StorageService';
-
 import { NotificationService } from './services/NotificationService';
-import { HistoryView } from './views/HistoryView'; // Added for routing if needed, but wait, HistoryView isn't in routes yet?
-// Actually, HistoryView is likely a sub-view or separate route. Let's check routes.
-// The routes show Home, Breathe, Category, Session, Profile.
-// HistoryView was found in file list but not in App.tsx routes.
-// I will just add the NotificationService check for now.
+import { OnboardingView } from './views/onboarding/OnboardingView';
+
+// Component to handle onboarding redirect
+const OnboardingGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if onboarding is completed
+    const isCompleted = StorageService.isOnboardingCompleted();
+    const isOnOnboardingRoute = location.pathname.startsWith('/onboarding');
+
+    if (!isCompleted && !isOnOnboardingRoute) {
+      // Redirect to onboarding if not completed and not already there
+      navigate('/onboarding', { replace: true });
+    } else if (isCompleted && isOnOnboardingRoute) {
+      // Redirect to home if completed but somehow on onboarding route
+      navigate('/', { replace: true });
+    }
+  }, [navigate, location]);
+
+  return <>{children}</>;
+};
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -31,19 +48,25 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="h-screen w-screen bg-neu-base overflow-hidden font-sans relative">
-        <div className="h-full w-full max-w-md mx-auto bg-neu-base relative shadow-2xl overflow-hidden sm:border-x border-white/20">
-          <Routes>
-            <Route path="/" element={<HomeView />} />
-            <Route path="/breathe" element={<BreatheView />} />
-            <Route path="/category/:categoryId" element={<CategoryView />} />
-            <Route path="/session/:patternId" element={<SessionView />} />
-            <Route path="/profile" element={<ProfileView />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          <BottomNavigation />
+      <OnboardingGate>
+        <div className="h-screen w-screen bg-neu-base overflow-hidden font-sans relative">
+          <div className="h-full w-full max-w-md mx-auto bg-neu-base relative shadow-2xl overflow-hidden sm:border-x border-white/20">
+            <Routes>
+              {/* Onboarding Route */}
+              <Route path="/onboarding" element={<OnboardingView />} />
+
+              {/* Main Routes */}
+              <Route path="/" element={<HomeView />} />
+              <Route path="/breathe" element={<BreatheView />} />
+              <Route path="/category/:categoryId" element={<CategoryView />} />
+              <Route path="/session/:patternId" element={<SessionView />} />
+              <Route path="/profile" element={<ProfileView />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            <BottomNavigation />
+          </div>
         </div>
-      </div>
+      </OnboardingGate>
     </Router>
   );
 };

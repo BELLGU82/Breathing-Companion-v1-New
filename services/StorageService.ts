@@ -411,5 +411,50 @@ export const StorageService = {
       totalSessions: currentSessionsCount,
       data
     };
+  },
+
+  // Onboarding Management
+  isOnboardingCompleted: (): boolean => {
+    return localStorage.getItem('neshima_onboarding_completed') === 'true';
+  },
+
+  setOnboardingCompleted: (status: boolean) => {
+    localStorage.setItem('neshima_onboarding_completed', String(status));
+  },
+
+  saveOnboardingEmail: (email: string) => {
+    // שמירה לוקאלית בלבד - לא נשלח לשרת
+    localStorage.setItem('neshima_onboarding_email', email);
+  },
+
+  getOnboardingEmail: (): string | null => {
+    return localStorage.getItem('neshima_onboarding_email');
+  },
+
+  // User Goal
+  saveUserGoal: (goal: any) => {
+    localStorage.setItem('neshima_user_goal', JSON.stringify(goal));
+  },
+
+  getUserGoal: (): any | null => {
+    const data = localStorage.getItem('neshima_user_goal');
+    return data ? JSON.parse(data) : null;
+  },
+
+  // Notification Preferences (extended)
+  saveNotificationPreferences: (prefs: any) => {
+    localStorage.setItem('neshima_notification_prefs', JSON.stringify(prefs));
+  },
+
+  getNotificationPreferences(): any {
+    const data = localStorage.getItem('neshima_notification_prefs');
+    return data ? JSON.parse(data) : {
+      morning: false,
+      morningTime: '08:00',
+      afternoon: false,
+      afternoonTime: '14:00',
+      evening: false,
+      eveningTime: '20:00'
+    };
   }
 };

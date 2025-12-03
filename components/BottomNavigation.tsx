@@ -8,8 +8,10 @@ export const BottomNavigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hide nav on session view
-  if (location.pathname.includes('/session')) return null;
+  // Hide nav on session view OR onboarding
+  if (location.pathname.includes('/session') || location.pathname.includes('/onboarding')) {
+    return null;
+  }
 
   const NavItem = ({ path, icon: Icon, label }: any) => {
     // Check if active (handle sub-routes for Breathe category)

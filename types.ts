@@ -72,3 +72,34 @@ export interface Reminder {
   days: number[]; // [0, 1, 2, 3, 4, 5, 6] (Sunday=0)
   enabled: boolean;
 }
+
+// Onboarding Types
+export enum OnboardingStep {
+  Welcome = 'welcome',
+  SignUp = 'signup',
+  Terms = 'terms',
+  Notifications = 'notifications',
+  Goal = 'goal',
+  Complete = 'complete'
+}
+
+export interface UserGoal {
+  targetDays: number; // מספר ימים רצופים
+  createdAt: number; // timestamp
+}
+
+export interface NotificationPreference {
+  morning: boolean;
+  morningTime: string; // "08:00"
+  afternoon: boolean;
+  afternoonTime: string; // "14:00"
+  evening: boolean;
+  eveningTime: string; // "20:00"
+}
+
+export interface OnboardingData {
+  email?: string;
+  completedAt?: number;
+  goal?: UserGoal;
+  notifications?: NotificationPreference;
+}
