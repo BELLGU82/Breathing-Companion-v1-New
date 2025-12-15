@@ -9,6 +9,7 @@ import { BottomNavigation } from './components/BottomNavigation';
 import { StorageService } from './services/StorageService';
 import { NotificationService } from './services/NotificationService';
 import { OnboardingView } from './views/onboarding/OnboardingView';
+import { InstallPrompt } from './components/InstallPrompt';
 
 // Component to handle onboarding redirect
 const OnboardingGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -63,6 +64,7 @@ const App: React.FC = () => {
               <Route path="/profile" element={<ProfileView />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <InstallPrompt />
             <BottomNavigation />
           </div>
         </div>

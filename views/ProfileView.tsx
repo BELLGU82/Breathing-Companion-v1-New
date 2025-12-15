@@ -7,7 +7,8 @@ import { StorageService } from '../services/StorageService';
 import { AudioService } from '../services/AudioService';
 import { HapticService } from '../services/HapticService';
 import { NotificationService } from '../services/NotificationService';
-import { ChartStats, Reminder, ChartRange } from '../types';
+import { ChartStats, Reminder, ChartRange, UserGoal } from '../types';
+import { TrendingUp } from 'lucide-react';
 
 // Neumorphic Toggle Component
 const NeuToggle = ({ value, onToggle }: { value: boolean, onToggle: (e: React.MouseEvent) => void }) => {
@@ -42,6 +43,8 @@ export const ProfileView: React.FC = () => {
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(StorageService.getDarkMode());
   const [isRegistered, setIsRegistered] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [userGoal, setUserGoal] = useState<UserGoal | null>(null);
 
   // Real Service State
   const [hapticsEnabled, setHapticsEnabled] = useState(HapticService.isEnabled());
@@ -127,6 +130,8 @@ export const ProfileView: React.FC = () => {
     setIsRegistered(registered);
     if (registered) {
       loadStats(selectedRange);
+      setUserName(StorageService.getUserName());
+      setUserGoal(StorageService.getUserGoal());
     }
   }, [selectedRange]);
 
@@ -239,7 +244,7 @@ export const ProfileView: React.FC = () => {
         </div>
         <div className="flex-1">
           <h2 className="text-h2 flex items-center gap-2">
-            {isRegistered ? 'משתמש רשום' : 'משתמש אורח'}
+            {isRegistered ? (userName || 'משתמש רשום') : 'משתמש אורח'}
             {!isRegistered && <span className="text-meta px-2 py-0.5 rounded-full">מוגבל</span>}
           </h2>
           <p className="text-meta">
@@ -254,6 +259,23 @@ export const ProfileView: React.FC = () => {
           </div>
         )}
       </NeuCard>
+
+      {/* Goal Section */}
+      {isRegistered && userGoal && (
+        <div className="animate-in fade-in duration-500">
+          <h3 className="text-meta uppercase tracking-wider mb-3 mr-2">היעד שלי</h3>
+          <NeuCard className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-neu-base shadow-neu-flat flex items-center justify-center text-primary">
+              <TrendingUp size={24} strokeWidth={1.5} />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-h2">{userGoal.targetDays} ימים ברצף</h2>
+              <p className="text-meta">המטרה האישית שלך</p>
+            </div>
+            {/* Future: Add Edit Button */}
+          </NeuCard>
+        </div>
+      )}
 
       {/* Stats Section - MOVED TO HOME */}
       {/* {isRegistered && (
@@ -282,8 +304,8 @@ export const ProfileView: React.FC = () => {
               toggle={handleNotificationsToggle}
               value={notificationsEnabled}
             >
-                  {notificationsEnabled && (
-                    <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+              {notificationsEnabled && (
+                <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
                   {/* Reminders List */}
                   {!isAddingReminder && reminders.map(reminder => (
                     <div key={reminder.id} className="flex items-center justify-between bg-white/50 p-3 rounded-xl border border-white/40">

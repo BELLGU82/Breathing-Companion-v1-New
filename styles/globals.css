@@ -83,7 +83,7 @@
 /* ========== BODY WITH BACKGROUND IMAGE ========== */
 body {
   /* תמונת רקע */
-  background-image: url('/background_4.jpg');
+  background-image: url('/background_3.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -204,6 +204,25 @@ body {
     transform: rotate(-5deg);
   }
 }
+
+@keyframes breatheGlow {
+  0% {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35), 0 6px 16px rgba(255, 255, 255, 0.10);
+  }
+
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.70), 0 10px 22px rgba(255, 255, 255, 0.22);
+  }
+
+  100% {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35), 0 6px 16px rgba(255, 255, 255, 0.10);
+  }
+}
+
+.toggle-breathe-on {
+  animation: breatheGlow 1.8s ease-in-out infinite;
+}
+
 
 .hover-animate:hover .icon-morning {
   animation: icon-rise 1.5s ease-in-out infinite;

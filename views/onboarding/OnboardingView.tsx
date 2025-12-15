@@ -40,9 +40,10 @@ export const OnboardingView: React.FC = () => {
         }
     };
 
-    const handleSignUp = (email: string) => {
-        setUserData(prev => ({ ...prev, email }));
+    const handleSignUp = (email: string, name: string) => {
+        setUserData(prev => ({ ...prev, email, name }));
         StorageService.saveOnboardingEmail(email);
+        StorageService.saveUserName(name);
         StorageService.setRegistered(true); // מסמן כמשתמש רשום
         handleNext();
     };

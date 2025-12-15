@@ -61,6 +61,7 @@ export interface ChartDataPoint {
 export interface ChartStats {
   totalMinutes: number;
   totalSessions: number;
+  streak?: number;
   data: ChartDataPoint[];
 }
 
@@ -98,6 +99,7 @@ export interface NotificationPreference {
 }
 
 export interface OnboardingData {
+  name?: string;
   email?: string;
   completedAt?: number;
   goal?: UserGoal;

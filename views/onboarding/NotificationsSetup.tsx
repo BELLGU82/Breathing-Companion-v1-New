@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Bell, Sunrise, Sun, Sunset } from 'lucide-react';
+import { Bell, Sunrise, Sun, Sunset, Clock } from 'lucide-react';
 import { NeuButton } from '../../components/Neu';
 import { NotificationPreference } from '../../types';
 import { HapticService } from '../../services/HapticService';
+
+// ⬇️ הנתיב לפי מה שכתבת
+import { TimePickerModal } from '../../components/ui/TimePickerModal';
 
 interface NotificationsSetupProps {
     onComplete: (prefs: NotificationPreference) => void;
@@ -16,21 +19,21 @@ export const NotificationsSetup: React.FC<NotificationsSetupProps> = ({ onComple
         afternoon: false,
         afternoonTime: '14:00',
         evening: false,
-        eveningTime: '20:00'
+        eveningTime: '20:00',
     });
 
     const handleToggle = (period: 'morning' | 'afternoon' | 'evening') => {
         HapticService.trigger(15);
-        setPreferences(prev => ({
+        setPreferences((prev) => ({
             ...prev,
-            [period]: !prev[period]
+            [period]: !prev[period],
         }));
     };
 
     const handleTimeChange = (period: 'morning' | 'afternoon' | 'evening', time: string) => {
-        setPreferences(prev => ({
+        setPreferences((prev) => ({
             ...prev,
-            [`${period}Time`]: time
+            [`${period}Time`]: time,
         }));
     };
 
@@ -68,7 +71,6 @@ export const NotificationsSetup: React.FC<NotificationsSetupProps> = ({ onComple
 
             {/* Time Options */}
             <div className="flex-1 space-y-4 overflow-y-auto">
-                {/* Morning */}
                 <NotificationOption
                     icon={Sunrise}
                     label="בוקר"
@@ -78,7 +80,6 @@ export const NotificationsSetup: React.FC<NotificationsSetupProps> = ({ onComple
                     onTimeChange={(t) => handleTimeChange('morning', t)}
                 />
 
-                {/* Afternoon */}
                 <NotificationOption
                     icon={Sun}
                     label="צהריים"
@@ -88,7 +89,6 @@ export const NotificationsSetup: React.FC<NotificationsSetupProps> = ({ onComple
                     onTimeChange={(t) => handleTimeChange('afternoon', t)}
                 />
 
-                {/* Evening */}
                 <NotificationOption
                     icon={Sunset}
                     label="ערב"
@@ -122,32 +122,67 @@ const NotificationOption: React.FC<{
     onToggle: () => void;
     onTimeChange: (time: string) => void;
 }> = ({ icon: Icon, label, enabled, time, onToggle, onTimeChange }) => {
+    const [pickerOpen, setPickerOpen] = useState(false);
+
     return (
         <div className="glass rounded-2xl p-4 transition-all">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 cursor-pointer" onClick={onToggle}>
                 <div className="flex items-center gap-3">
                     <Icon className="icon-primary" strokeWidth={1.5} />
                     <span className="text-body">{label}</span>
                 </div>
-                <button
-                    onClick={onToggle}
-                    className="w-12 h-7 rounded-full transition-all relative glass"
+
+                {/* Toggle (smaller) */}
+                <div
+                    className={`
+            w-9 h-5 rounded-full relative transition-all pointer-events-none
+            border border-white/60
+            ${enabled ? 'bg-white/25' : 'bg-white/15'}
+          `}
                 >
                     <div
-                        className={`absolute top-1 w-5 h-5 rounded-full glass transition-all ${enabled ? 'left-6' : 'left-1'
-                            }`}
+                        className={`
+              absolute top-0.5 w-4 h-4 rounded-full transition-all
+              ${enabled ? 'left-4 toggle-breathe-on' : 'left-0.5'}
+            `}
+                        style={{
+                            backgroundColor: '#ffffff',
+                            boxShadow: enabled ? undefined : '0 1px 3px rgba(0,0,0,0.18)',
+                        }}
                     />
-                </button>
+                </div>
             </div>
 
             {enabled && (
                 <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-                    <input
-                        type="time"
-                        value={time}
-                        onChange={(e) => onTimeChange(e.target.value)}
-                        className="w-full bg-neu-base shadow-neu-inner rounded-xl p-3 text-center text-h2 outline-none"
+                    {/* Compact time field */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            HapticService.trigger(10);
+                            setPickerOpen(true);
+                        }}
+                        className="
+              w-full rounded-xl px-3 py-2
+              bg-white/10 border border-white/20
+              shadow-neu-inner
+              flex items-center justify-center gap-2
+              text-white
+            "
                         dir="ltr"
+                    >
+                        <Clock className="text-white/90" strokeWidth={1.5} size={16} />
+                        <span className="text-white text-base">{time}</span>
+                    </button>
+
+                    {/* Custom modal picker (styled) */}
+                    <TimePickerModal
+                        open={pickerOpen}
+                        value={time}
+                        onChange={onTimeChange}
+                        onClose={() => setPickerOpen(false)}
+                        title="בחירת שעה"
+                        backgroundColor="#9cafc6"
                     />
                 </div>
             )}

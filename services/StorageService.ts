@@ -11,6 +11,7 @@ const STORAGE_KEY_HAPTICS = 'neshima_haptics_enabled';
 const STORAGE_KEY_SOUNDS = 'neshima_sounds_enabled';
 const STORAGE_KEY_CUSTOM_PATTERNS = 'neshima_custom_patterns';
 const STORAGE_KEY_DARK_MODE = 'neshima_dark_mode';
+const STORAGE_KEY_USER_NAME = 'neshima_user_name';
 
 // In-memory counter for guest users (ephemeral)
 let ephemeralSessionCount = 0;
@@ -406,9 +407,13 @@ export const StorageService = {
       }));
     }
 
+    // Get streak from general stats
+    const streak = StorageService.getStats().streak;
+
     return {
       totalMinutes: Math.floor(currentTotal / 60),
       totalSessions: currentSessionsCount,
+      streak,
       data
     };
   },
@@ -431,6 +436,14 @@ export const StorageService = {
     return localStorage.getItem('neshima_onboarding_email');
   },
 
+  saveUserName: (name: string) => {
+    localStorage.setItem(STORAGE_KEY_USER_NAME, name);
+  },
+
+  getUserName: (): string | null => {
+    return localStorage.getItem(STORAGE_KEY_USER_NAME);
+  },
+
   // User Goal
   saveUserGoal: (goal: any) => {
     localStorage.setItem('neshima_user_goal', JSON.stringify(goal));
@@ -442,8 +455,48 @@ export const StorageService = {
   },
 
   // Notification Preferences (extended)
+  // Notification Preferences (extended)
   saveNotificationPreferences: (prefs: any) => {
     localStorage.setItem('neshima_notification_prefs', JSON.stringify(prefs));
+
+    // Sync with Reminders System
+    // We convert the onboarding preferences into actual Reminder objects
+    const reminders: Reminder[] = [];
+
+    if (prefs.morning) {
+      reminders.push({
+        id: 'morning-reminder',
+        time: prefs.morningTime,
+        days: [0, 1, 2, 3, 4, 5, 6], // Everyday
+        enabled: true
+      });
+    }
+
+    if (prefs.afternoon) {
+      reminders.push({
+        id: 'afternoon-reminder',
+        time: prefs.afternoonTime,
+        days: [0, 1, 2, 3, 4, 5, 6],
+        enabled: true
+      });
+    }
+
+    if (prefs.evening) {
+      reminders.push({
+        id: 'evening-reminder',
+        time: prefs.eveningTime,
+        days: [0, 1, 2, 3, 4, 5, 6],
+        enabled: true
+      });
+    }
+
+    // Save these as the initial reminders
+    // Note: This overwrites existing reminders if called from onboarding. 
+    // If called later, we might want to merge, but for MVP onboarding flow this is fine.
+    if (reminders.length > 0) {
+      StorageService.saveReminders(reminders);
+      StorageService.setNotificationsEnabled(true);
+    }
   },
 
   getNotificationPreferences(): any {

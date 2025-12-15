@@ -3,20 +3,24 @@ import { StorageService } from './StorageService';
 export const NotificationService = {
     requestPermission: async (): Promise<boolean> => {
         if (!('Notification' in window)) {
-            console.log('This browser does not support desktop notification');
+            console.warn('NotificationService: Notifications not supported in this browser');
             return false;
         }
+
+        console.log('NotificationService: Current permission:', Notification.permission);
 
         if (Notification.permission === 'granted') {
             return true;
         }
 
-        if (Notification.permission !== 'denied') {
+        try {
             const permission = await Notification.requestPermission();
+            console.log('NotificationService: New permission:', permission);
             return permission === 'granted';
+        } catch (error) {
+            console.error('NotificationService: Error requesting permission:', error);
+            return false;
         }
-
-        return false;
     },
 
     isEnabled: (): boolean => {
